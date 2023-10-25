@@ -13,4 +13,5 @@ export function navigate(name, params) {
 export const platformOS = Platform.OS;
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
-export const device = (windowWidth > 1024) ? 'laptop' :((windowWidth > 768) ? 'tablet' : 'mobile');
+//export const device = (windowWidth > 1024) ? 'laptop' :((windowWidth > 768) ? 'tablet' : 'mobile');
+export const device = 'tablet';
