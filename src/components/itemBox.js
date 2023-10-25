@@ -1,21 +1,25 @@
 import * as React from 'react';
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 
-const ItemBox = props => {
-	const data = props.data
+const ItemBox = ({data, viewType, onPressFunc}) => {
+	const handlePress = async () => {
+        await onPressFunc(data.id);
+    }
 
 	return (
-		<View className="col-span-3 bg-shiro shadow-lg p-8 rounded-xl" >
+		<TouchableWithoutFeedback onPress={() => handlePress()}>
+		<View className={(viewType == 'grid' ? 'col-span-3 shadow-lg rounded-xl ' : 'col-span-12 flex flex-row border-t border-auxiliary ') + "bg-shiro p-8"}>
 			<Image
-				className="block w-full h-[120px] mx-auto my-auto"
+				className={(viewType == 'grid' ? 'w-full h-[120px] ' : 'basis-1/4 h-[100px] ') + "block mx-auto my-auto"}
 				source={{uri:data.thumbnail}}
 			/>
-			<View className="pt-2 h-[80px]" >
+			<View className={(viewType == 'grid' ? '' : 'basis-3/4 pl-2 ') + "pt-2 h-[80px]"}>
 				<Text className="text-kuro text-xl font-bold">{data.name}</Text>
 				<Text className="text-accent text-l font-bold">$ {data.price}</Text>
 				<Text className="text-kuro text-l">{data.description}</Text>
 			</View>
 	  	</View>
+		</TouchableWithoutFeedback>
 	);
 };
 

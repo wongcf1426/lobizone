@@ -1,35 +1,92 @@
 import * as React from 'react';
-import { View, Text, WebView } from "react-native";
+import { View, Text, ScrollView, TouchableWithoutFeedback } from "react-native";
+import { useSelector, useDispatch } from 'react-redux'
+import { MaterialIcons } from '@expo/vector-icons';
+
 import Navigation from '../components/navigation';
 import ItemBox from '../components/itemBox';
 
-import { testing } from '../controller/productController';
+import * as testingData from '../../store/testing';
 import * as store from '../../store';
-const Home = () => {
+import { addCart } from '../../store/cart'
+
+import { testing } from '../controller/productController';
+
+const Cart = () => {
+	const [ispopCart, setispopCart] = React.useState(false);
+
+	const shoppingCart  = useSelector(state => state.cart)
+	const dispatch = useDispatch()
+	console.log(shoppingCart)
+
+	const addItemToCart = async(itemId) => {
+		dispatch(addCart({itemId: itemId}))
+	}
+
+	const showCartPop=()=>{
+		if(ispopCart) setispopCart(false)
+		else setispopCart(true)
+	}
+	
 	//testing();
 
-	const testData = [
-		{id:1, name:'明信片（款A）', price:10, 'description':'postcard', thumbnail:'https://media.istockphoto.com/id/828156368/de/foto/demo.jpg?s=612x612&w=0&k=20&c=jT1TzYO-5XJYjUByI-G12oATtB6yO8QXcm1iesvlKTA='},
-		{id:2, name:'明信片（款B）', price:15, 'description':'B4 size', thumbnail:'https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg'},
-		{id:3, name:'貼紙', price:30, 'description':'', thumbnail:'https://static.wixstatic.com/media/ed70df_b5f46dcbb55f49b2bb27550accacca05~mv2.jpg/v1/fill/w_640,h_478,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/ed70df_b5f46dcbb55f49b2bb27550accacca05~mv2.jpg'},
-		{id:4, name:'貼紙（小）', price:25, 'description':'7x7cm', thumbnail:'https://mydeermoon.com/cdn/shop/files/image_fd85722f-d5bd-416e-98b8-67f0ce5f92b4.png?v=1692945697'},
-		{id:5, name:'加購', price:1, 'description':'', thumbnail:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRppnVRGfKkfeXXBHZxfR-2bdiQ4mLofWwrgQ&usqp=CAU'}
-	]
 	return (
 		<View className={(store.device !== 'mobile' ? 'w-full pl-[4rem] absolute right-0 ' : 'w-full ') + 'bg-auxiliary h-full'}>
 			<View className='w-full h-full'>
-				<View className="py-8 px-6 h-5/6 w-full">
+				<View className="py-8 px-6 h-full w-full">
 					<View className="grid grid-cols-12 gap-6 pb-5">
-						<View className="col-span-12 bg-primary shadow-lg p-8 rounded-xl" >
-							<View className="sm:pr-8">
-								<Text className="text-shiro text-xl font-bold"></Text>
+						<View className="col-span-10 bg-primary shadow-lg p-4 rounded-xl" >
+							<View>
+								<Text className="text-shiro text-xl font-bold">Tag/ Searching Box</Text>
 							</View>
 						</View>
+						<View className="col-span-2 bg-accent shadow-lg p-4 rounded-xl" >
+							<TouchableWithoutFeedback onPress={showCartPop}>
+								<View className="justify-center items-center ">
+									<Text className="text-shiro text-xl font-bold">
+										<MaterialIcons name='shopping-cart' size={28}/>
+									</Text>
+								</View>
+							</TouchableWithoutFeedback>
+						</View>
 					</View>
-					<View className="grid grid-cols-12 gap-6 pb-5">
-						{testData.map(function(itemData, i){
-							return <ItemBox data={itemData} key={i}/>;
-						})}
+					<ScrollView>
+						<View className="grid grid-cols-12 gap-6 pb-5">
+							{testingData.items.map(function(itemData, i){
+								return <ItemBox data={itemData} key={i} viewType='grid' onPressFunc = {event => addItemToCart(itemData.id)}/>;
+							})}
+						</View>
+					</ScrollView>
+				</View>
+
+				<View className={(ispopCart ? 'block ' : 'hidden ') + "absolute py-8 px-6 h-full w-full"}>
+					<View className="bg-primary shadow-lg p-8 rounded-xl h-full" >
+						<View className="grid grid-cols-12 gap-6 pb-5 h-full">
+							<View className="col-span-10" >
+								<Text className="text-shiro text-xl font-bold">Order Detail</Text>
+							</View>
+							<View className="col-span-2" >
+								<TouchableWithoutFeedback onPress={showCartPop}>
+									<View className="justify-end items-end">
+										<Text className="text-shiro text-xl font-bold">
+											<MaterialIcons name="close" size={30} />
+										</Text>
+									</View>
+								</TouchableWithoutFeedback>
+							</View>
+							<View className="col-span-8 bg-shiro shadow-lg p-4 rounded-xl" >
+								<ScrollView>
+									<View className="grid grid-cols-12">
+										{testingData.items.map(function(itemData, i){
+											return <ItemBox data={itemData} key={i} viewType='list' onPressFunc = {event => addItemToCart(itemData.id)}/>;
+										})}
+									</View>
+								</ScrollView>
+							</View>
+							<View className="col-span-4 bg-shiro shadow-lg p-4 rounded-xl" >
+								
+							</View>
+						</View>
 					</View>
 				</View>
 			</View>
@@ -38,4 +95,4 @@ const Home = () => {
 	)
 }
 
-export default Home
+export default Cart
