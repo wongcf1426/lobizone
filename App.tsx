@@ -8,7 +8,7 @@ import Constants from "expo-constants";
 
 import { StatusBar } from 'expo-status-bar';
 
-import Home from './src/screens/home';
+import Cart from './src/screens/cart';
 import List from './src/screens/list';
 
 import "./styles";
@@ -27,7 +27,7 @@ export default function App() {
               animation: 'slide_from_right'
             }}
           >
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Cart" component={Cart} />
             <Stack.Screen name="List" component={List} />
           </Stack.Navigator>
         </NavigationContainer>

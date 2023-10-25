@@ -32,7 +32,7 @@ const List = () => {
 	return (
 		<>
 			{isLoading && <LoadingBar loading={isLoading}/>}
-			<View className={(store.platformOS == 'web' ? 'w-5/6 absolute right-0 ' : 'w-full ') + 'bg-primary h-full'}>
+			<View className={(store.device !== 'mobile' ? 'w-5/6 absolute right-0 ' : 'w-full ') + 'bg-primary h-full'}>
 				<View className='w-full h-full'>
 					<View className="py-8 px-6 h-5/6 w-full">
 						<View className="grid grid-cols-12 gap-6">

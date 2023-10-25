@@ -29,7 +29,7 @@ const LoadingBar = ({loading}) => {
   }
 
   return (
-    <View className='w-full bg-accent h-1 z-30'>
+    <View className='w-full bg-shiro h-1 z-30'>
       <Animated.View style={[styles]}>
         <View className="bg-auxiliary h-full"></View>
       </Animated.View>

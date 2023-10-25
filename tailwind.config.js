@@ -9,9 +9,9 @@
       //#6C6024 //#DAC9A6
       colors: {
         'primary': '#00bcd4',
-        'accent': '#00bcd4',
+        'accent': '#ff9626',
         'auxiliary': '#eceff1',
-        'shiro': '#FCFAF2',
+        'shiro': '#f9fcff',
         'dark': '#1C1C1C',
       },
     },
