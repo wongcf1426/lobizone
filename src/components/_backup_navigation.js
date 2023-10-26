@@ -48,8 +48,13 @@ const Navigation = props => {
   function SideNav() {
     return(
       <TouchableWithoutFeedback onPress={toggleAnimation}>
-        <View className='w-16 h-full'>
-            <View className='w-full bg-primary h-full flex flex-col justify-between'>
+        <View className={
+          (store.device !== 'mobile'? 'fixed w-[4rem] ' :(isexpandSideNav) ? 'absolute w-full ' : 'w-0 ') +
+          'left-0 top-0 h-full bg-dark/70 z-20 flex'
+          }
+        >
+          <Animated.View style={(store.device !== 'mobile' ? [{height:"100%"}]: [styles])}>
+            <View className={(store.device !== 'mobile' ? 'w-full ': 'w-1/3 ') + 'bg-primary h-full flex flex-col justify-between'}>
               <View className="top-3 w-full">
                   <View className="items-center w-full h-10" >
                     <View className="w-10 h-10 bg-shiro rounded-lg"></View>
@@ -73,6 +78,7 @@ const Navigation = props => {
                 </View>
               </View>
             </View>
+          </Animated.View>
         </View>
       </TouchableWithoutFeedback>
     );
