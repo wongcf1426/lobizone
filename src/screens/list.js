@@ -35,8 +35,8 @@ const List = () => {
 			<View className={(store.device !== 'mobile' ? 'w-5/6 absolute right-0 ' : 'w-full ') + 'bg-primary h-full'}>
 				<View className='w-full h-full'>
 					<View className="py-8 px-6 h-5/6 w-full">
-						<View className="grid grid-cols-12 gap-6">
-							<View className="col-span-12 bg-auxiliary shadow-lg p-8 rounded-xl" >
+						<View className="flex flex-row basis-full gap-6">
+							<View className="basis-full bg-auxiliary shadow-lg p-8 rounded-xl" >
 								<View className="sm:pr-8">
 									<DataTable mapping={tableMapping} data={result}/>
 								</View>

@@ -6,9 +6,9 @@
   ],
   theme: {
     extend: {
-      //#6C6024 //#DAC9A6
+      //#6C6024 //#DAC9A6 //#00bcd4
       colors: {
-        'primary': '#00bcd4',
+        'primary': '#00ded3',
         'accent': '#ff9626',
         'auxiliary': '#eceff1',
         'shiro': '#f9fcff',
