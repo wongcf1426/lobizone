@@ -12,25 +12,29 @@ import { addtoCart, updateCart, resetCart } from '../../store/cart'
 import { getProductList } from '../controller/productController';
 
 const Cart = () => {
-	const [ispopCart, setispopCart] = React.useState(false);
 	const [itemsList, setitemsList] = React.useState([]);
+	const [itemsIds, setitemsIds] = React.useState([]);
 
 	const shoppingCart = useSelector(state => state.cart)
+	console.log(shoppingCart)
 	const dispatch = useDispatch()
 
 	const addCartItem = async(itemId, updateQty) => {
 		var tmpItem = shoppingCart.cart.filter(function (el) {
 			return el.id == itemId;
 		});
-		console.log(updateQty)
 		if(tmpItem.length > 0){
 			//exist in cart
 			tmpItem = tmpItem[0]
-			dispatch(updateCart({itemId: itemId, updateQty: parseInt(tmpItem.qty) + parseInt(updateQty)}))
+			await dispatch(updateCart({itemId: itemId, updateQty: parseInt(tmpItem.qty) + parseInt(updateQty)}))
 		}else{
-			dispatch(addtoCart({itemId: itemId, updateQty: updateQty}))
+			await dispatch(addtoCart({itemId: itemId, updateQty: updateQty}))
+			var tmp = itemsIds
+			tmp.push(itemId)
+			setitemsIds(tmp)
+			getItemList()
 		}
-		console.log(shoppingCart.cart)
+
 	}
 	const updateCartItem = async(itemId, updateQty) => {
 		var tmpItem = shoppingCart.cart.filter(function (el) {
@@ -39,23 +43,24 @@ const Cart = () => {
 		if(tmpItem.length > 0){
 			//exist in cart
 			tmpItem = tmpItem[0]
-			dispatch(updateCart({itemId: itemId, updateQty: parseInt(updateQty)}))
+			await dispatch(updateCart({itemId: itemId, updateQty: parseInt(updateQty)}))
 		}
-		console.log(shoppingCart.cart)
+		getItemList()
 	}
 
 	const resetCartItem = async() => {
-		dispatch(resetCart())
-	}
-
-	const showCartPop=()=>{
-		if(ispopCart) setispopCart(false)
-		else setispopCart(true)
+		await dispatch(resetCart())
+		await setitemsIds([])
+		var result = await getProductList();
+		setitemsList(result);
 	}
 
 	async function getItemList() {
 		try {
-			const result = await getProductList();
+			var result = await getProductList();
+			result = await result.filter(function (el) {
+				return !itemsIds.includes(el.id);
+			});
 			setitemsList(result);
 		} catch (err) {
 			console.log(err);
@@ -99,7 +104,7 @@ const Cart = () => {
 								</View>
 								<View className="h-[10%] flex flex-row flex-wrap justify-between w-full">
 									<Text className="text-kuro text-2xl font-bold">Total</Text>
-									<Text className="text-primary text-2xl font-bold">0.0</Text>
+									<Text className="text-primary text-2xl font-bold">{shoppingCart.totalprice.toFixed(2)}</Text>
 								</View>
 								<View className="h-[10%] w-full flex flex-row justify-end">
 									<View className="basis-1/4" >

@@ -31,6 +31,7 @@ const ItemBox = ({data, viewType, editable, editQty=0, onPressFunc = function(){
 					{editable &&
 						<View className='basis-1/2 pl-1 '>
 							<View className="mt-auto mb-auto">
+								<Text>{data.qty}</Text>
 								<QuantityInput
 									qty={qty}
 									onChangeFunc={(event,value) => updateQty(event)}
