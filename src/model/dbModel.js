@@ -17,25 +17,14 @@ export const initDB = async () => {
 	try {
 		const db = await openDatabase();
 
-		//console.log(db);
 		db.transaction(tx => {
 			tx.executeSql(
-			  'CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, price DECIMAL, inventory INT, description TEXT, thumbnail TEXT, status INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP)',
+			  'CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, price DECIMAL, inventory INT, description TEXT, thumbnail TEXT, status INT);CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, status INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);CREATE TABLE IF NOT EXISTS order_detail (order_id INTEGER, item_id INTEGER, qty INT, unit_price INT);CREATE TABLE IF NOT EXISTS event_log (id INTEGER PRIMARY KEY AUTOINCREMENT, code INT, message TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);',
 			  null,
 			  (txObj, { rows: { _array } }) => console.log({ data: _array }),
 			  (txObj, error) => console.log('Error ', error)
 			)
 		})
-
-		db.transaction(tx => {
-			tx.executeSql(
-			  `SELECT * from items where 1;`,
-			  null,
-			  (_, { rows: { _array } }) => console.log({ items: _array }),
-			  (txObj, error) => console.log('Error ', error)
-			);
-		  });
-		//db.transaction(tx => {})
 	}catch (error) {
 		console.log(error)
 		return({state: 'fail'});

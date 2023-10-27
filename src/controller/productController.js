@@ -29,12 +29,12 @@ export const checkIsValidProduct = async (productId, qty) => {
 		var productData = testingData.items.filter(function (el) {
 			return el.id == productId;
 		  });
-		  
-		if(productData.length > 0) {
+
+		if(productData.length > 0 && qty > 0) {
 			productData = productData[0]
-			if(productData.inventory >= qty && productData.status == 1) return true
+			if(productData.inventory >= qty && productData.status == 1) return productData
 		}
-		return false
+		return 0
 
 	}catch (error) {
 		console.log(error)

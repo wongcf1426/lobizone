@@ -1,66 +1,93 @@
 import * as React from 'react';
 import { View, Text, ScrollView, TouchableWithoutFeedback } from "react-native";
-import { useSelector, useDispatch } from 'react-redux'
 import { MaterialIcons } from '@expo/vector-icons';
 
 import Navigation from '../components/navigation';
 import ItemBox from '../components/itemBox';
 
-import * as store from '../../store';
-import { addtoCart, updateCart, resetCart } from '../../store/cart'
+import { getProductList, checkIsValidProduct } from '../controller/productController';
 
-import { getProductList } from '../controller/productController';
 
 const Cart = () => {
 	const [itemsList, setitemsList] = React.useState([]);
-	const [itemsIds, setitemsIds] = React.useState([]);
-
-	const shoppingCart = useSelector(state => state.cart)
-	console.log(shoppingCart)
-	const dispatch = useDispatch()
+	const [cartList, setCartList] = React.useState([]);
 
 	const addCartItem = async(itemId, updateQty) => {
-		var tmpItem = shoppingCart.cart.filter(function (el) {
-			return el.id == itemId;
-		});
-		if(tmpItem.length > 0){
-			//exist in cart
-			tmpItem = tmpItem[0]
-			await dispatch(updateCart({itemId: itemId, updateQty: parseInt(tmpItem.qty) + parseInt(updateQty)}))
-		}else{
-			await dispatch(addtoCart({itemId: itemId, updateQty: updateQty}))
-			var tmp = itemsIds
-			tmp.push(itemId)
-			setitemsIds(tmp)
-			getItemList()
+		let itemData = await checkIsValidProduct(itemId, updateQty)
+		if (itemData !== 0) {
+			updateQty = parseInt(updateQty)
+			let prevCart = [...cartList];
+			let existFlag = await prevCart.filter(function (el) {
+				return el.id == itemId;
+			});
+			if(existFlag.length > 0) {
+				updateQty += parseInt(existFlag[0].qty)
+				updateCartItem(itemId, updateQty)
+			}else{
+				let itemPrice = updateQty*parseFloat(itemData.price)
+				let tmp = {
+					id: itemData.id,
+					name: itemData.name,
+					price: itemData.price,
+					thumbnail: itemData.thumbnail,
+					qty: updateQty,
+					itemPrice: itemPrice
+				}
+				await setCartList([tmp, ...cartList])
+			}
 		}
-
 	}
+
 	const updateCartItem = async(itemId, updateQty) => {
-		var tmpItem = shoppingCart.cart.filter(function (el) {
-			return el.id == itemId;
-		});
-		if(tmpItem.length > 0){
-			//exist in cart
-			tmpItem = tmpItem[0]
-			await dispatch(updateCart({itemId: itemId, updateQty: parseInt(updateQty)}))
+		console.log('updateCartItem: ' + itemId + ' '+updateQty)
+		updateQty = parseInt(updateQty)
+		if(updateQty > 0)
+		{
+			let itemData = await checkIsValidProduct(itemId, updateQty)
+			if (itemData !== 0) {
+				let prevCart = [...cartList];
+				let itemPrice = updateQty*parseFloat(itemData.price)
+				let tmp = {
+					id: itemData.id,
+					name: itemData.name,
+					price: itemData.price,
+					thumbnail: itemData.thumbnail,
+					qty: updateQty,
+					itemPrice: itemPrice
+				}
+
+				var tmpCart = []
+				await prevCart.map(function(el, i){
+					if(el.id != itemData.id){
+					tmpCart.push(el)
+					}else {
+					tmpCart.push(tmp)
+					}
+				})
+				await setCartList(tmpCart)
+			}
+		} else {
+			removeCartItem(itemId)
 		}
-		getItemList()
 	}
 
+	const removeCartItem = async(itemId) => {
+		let prevCart = [...cartList];
+		var tmpCart = []
+		await prevCart.map(function(el, i){
+			if(el.id != itemId){
+				tmpCart.push(el)
+			}
+		})
+		await setCartList(tmpCart)
+	}
 	const resetCartItem = async() => {
-		await dispatch(resetCart())
-		await setitemsIds([])
-		var result = await getProductList();
-		setitemsList(result);
+		await setCartList([])
 	}
 
 	async function getItemList() {
 		try {
 			var result = await getProductList();
-			result = await result.filter(function (el) {
-				return !itemsIds.includes(el.id);
-			});
 			setitemsList(result);
 		} catch (err) {
 			console.log(err);
@@ -96,15 +123,19 @@ const Cart = () => {
 								<View className="h-[80%] pb-4 w-full">
 									<ScrollView>
 										<View className="flex flex-row flex-wrap w-full">
-										{shoppingCart.cart.map(function(itemData, i){
-											return <ItemBox data={itemData} key={i} viewType='mini-list' editable={true} editQty={itemData.qty} onQtyUpdateFunc={(event,value) => updateCartItem(itemData.id, event)}/>;
+										{cartList.map(function(itemData, i){
+											return <ItemBox data={itemData} key={i} viewType='mini-list' editable={true} onQtyUpdateFunc={(event,value) => updateCartItem(itemData.id, event)}/>;
 										})}
 										</View>
 									</ScrollView>
 								</View>
 								<View className="h-[10%] flex flex-row flex-wrap justify-between w-full">
 									<Text className="text-kuro text-2xl font-bold">Total</Text>
-									<Text className="text-primary text-2xl font-bold">{shoppingCart.totalprice.toFixed(2)}</Text>
+									<Text className="text-primary text-2xl font-bold">{
+										cartList.reduce((accumulator, object) => {
+											return accumulator + object.itemPrice;
+										}, 0).toFixed(2)
+									}</Text>
 								</View>
 								<View className="h-[10%] w-full flex flex-row justify-end">
 									<View className="basis-1/4" >
@@ -131,10 +162,10 @@ const Cart = () => {
 							</View>
 						</View>
 					</View>
-					
+
 				</View>
 			</View>
-			
+
 		</View>
 	)
 }

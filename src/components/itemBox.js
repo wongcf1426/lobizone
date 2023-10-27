@@ -1,15 +1,21 @@
 import * as React from 'react';
 import { View, Text, Image, TouchableWithoutFeedback, TextInput } from "react-native";
-import QuantityInput from '../components/numberInput.js';
+import NumberInput from '../components/numberInput.js';
 
 //viewType: grid/ list/ mini-list
-const ItemBox = ({data, viewType, editable, editQty=0, onPressFunc = function(){}, onQtyUpdateFunc = function(){}}) => {
-	const [qty, setqty] = React.useState(editQty);
+const ItemBox = ({data, viewType, editable, onPressFunc = function(){}, onQtyUpdateFunc = function(){}}) => {
 
 	const updateQty = (value)=>{
-		console.log('itemBox' + value)
-		setqty(value)
-		onQtyUpdateFunc(value)
+		if(value == 'minus'){
+			onQtyUpdateFunc(parseInt(data.qty)-1)
+		}else if(value == 'plus'){
+			onQtyUpdateFunc(parseInt(data.qty)+1)
+		}else if(parseInt(value) != NaN){
+			console.log('itemBox: ' + value)
+			onQtyUpdateFunc(parseInt(value))
+		}else{
+			onQtyUpdateFunc(1)
+		}
 	}
 
 	const handlePress = async () => {
@@ -24,18 +30,16 @@ const ItemBox = ({data, viewType, editable, editQty=0, onPressFunc = function(){
 						source={{uri:data.thumbnail}}
 					/>
 					<View className={(viewType == 'grid' ? '' : 'basis-1/3 pl-2 ') + "pt-2 h-[80px] overflow-hidden"}>
-						<Text className={(viewType == 'mini-list' ? 'text-m ' : 'text-l ') + "text-kuro font-bold"}>{data.name}</Text>
-						<Text className={(viewType == 'mini-list' ? 'text-m ' : 'text-xl ') + "text-accent font-bold"}>$ {data.price}</Text>
-						{(viewType !== 'mini-list') && <Text className="text-kuro text-m">{data.description}</Text>}
+						<Text className={(viewType == 'mini-list' ? 'text-base ' : 'text-l ') + "text-kuro font-bold"}>{data.name}</Text>
+						{(viewType !== 'mini-list') && <Text className={(data.inventory<5 ? 'bg-accent text-shiro ' : 'bg-auxiliary text-kuro ') + "rounded-xl text-sm px-[3px] py-[1px] text-center"}>貨存: {data.inventory}</Text>}
+						<Text className={(viewType == 'mini-list' ? 'text-base ' : 'text-xl ') + "text-accent font-bold"}>$ {data.price}</Text>
+						{(viewType !== 'mini-list') && <Text className="text-kuro text-m text-clip">{data.description}</Text>}
 					</View>
 					{editable &&
 						<View className='basis-1/2 pl-1 '>
-							<View className="mt-auto mb-auto">
-								<Text>{data.qty}</Text>
-								<QuantityInput
-									qty={qty}
-									onChangeFunc={(event,value) => updateQty(event)}
-								/>
+							<View className="mt-auto mb-auto w-full h-[40px]">
+								<NumberInput num={data.qty} onChangeFunc={(value) => updateQty(value)}/>
+
 							</View>
 						</View>
 					}
