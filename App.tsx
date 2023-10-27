@@ -9,6 +9,7 @@ import Constants from "expo-constants";
 import { StatusBar } from 'expo-status-bar';
 
 import Cart from './src/screens/cart';
+import Item from './src/screens/item';
 import List from './src/screens/list';
 
 import "./styles";
@@ -21,6 +22,7 @@ export default function App() {
         <StatusBar style="dark" />
         <NavigationContainer ref={store.navigationRef}>
           <Stack.Navigator
+            initialRouteName="Item"
             screenOptions={{
               headerShown: false,
               animationTypeForReplace: 'push',
@@ -28,6 +30,7 @@ export default function App() {
             }}
           >
             <Stack.Screen name="Cart" component={Cart} />
+            <Stack.Screen name="Item" component={Item} />
             <Stack.Screen name="List" component={List} />
           </Stack.Navigator>
         </NavigationContainer>

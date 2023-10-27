@@ -59,7 +59,7 @@ const Navigation = props => {
                       <View className="pt-4 space-y-1 border-t border-shiro">
                         <SideNavItem icon="shopping-cart" landing="Cart"/>
                         <SideNavItem icon="receipt" landing="List"/>
-                        <SideNavItem icon="view-list" landing="List"/>
+                        <SideNavItem icon="view-list" landing="Item"/>
                         <SideNavItem icon="bar-chart" landing="List"/>
                       </View>
                     </View>

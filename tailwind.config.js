@@ -6,13 +6,15 @@
   ],
   theme: {
     extend: {
-      //#6C6024 //#DAC9A6 //#00bcd4
+      //#6C6024 //#DAC9A6 //#00bcd4 //#00ded3
       colors: {
-        'primary': '#00ded3',
-        'accent': '#ff9626',
-        'auxiliary': '#eceff1',
+        'primary': '#b2d1cd',
+        'accent': '#EED2CC',
+        'focus': '#e8a2a2',
+        'auxiliary': '#EAE6E5',
         'shiro': '#f9fcff',
         'dark': '#1C1C1C',
+        'grey': '#d7dcdf',
       },
     },
   },

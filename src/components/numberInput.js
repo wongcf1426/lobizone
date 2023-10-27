@@ -7,7 +7,7 @@ const NumberInput = ({num, onChangeFunc}) => {
   }
   return (
     <View className='flex flex-row rounded-xl mx-1 shadow-l bg-shiro  h-full'>
-      <View className='basis-1/3 bg-primary rounded-l-xl align-middle'>
+      <View className='basis-1/3 bg-accent rounded-l-xl align-middle'>
         <TouchableWithoutFeedback onPress={() => updateText('minus')}>
           <Text className="text-xl text-shiro text-center font-black my-auto">-</Text>
         </TouchableWithoutFeedback>
@@ -21,7 +21,7 @@ const NumberInput = ({num, onChangeFunc}) => {
         />*/}
         <Text className="text-l text-kuro text-center font-semibold my-auto">{num}</Text>
       </View>
-      <View className='basis-1/3 bg-primary rounded-r-xl align-middle'>
+      <View className='basis-1/3 bg-accent rounded-r-xl align-middle'>
         <TouchableWithoutFeedback onPress={() => updateText('plus')}>
           <Text className="text-xl text-shiro text-center font-black my-auto">+</Text>
         </TouchableWithoutFeedback>

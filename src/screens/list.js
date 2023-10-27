@@ -5,8 +5,6 @@ import LoadingBar from '../components/loadingBar';
 import { useFocusEffect } from '@react-navigation/native';
 
 import DataTable from '../components/dataTable';
-//import { getUserList } from '../controller/UserController';
-import * as store from '../../store';
 
 const List = () => {
 	let [result, setResult] = React.useState([]);
@@ -30,13 +28,16 @@ const List = () => {
 	);
 
 	return (
-		<>
+		<View className='bg-auxiliary w-full h-full flex flex-1 flex-row'>
 			{isLoading && <LoadingBar loading={isLoading}/>}
-			<View className={(store.device !== 'mobile' ? 'w-5/6 absolute right-0 ' : 'w-full ') + 'bg-primary h-full'}>
-				<View className='w-full h-full'>
-					<View className="py-8 px-6 h-5/6 w-full">
+			<View className="flex-none w-16 h-full">
+				<Navigation currentScreen='List'/>
+			</View>
+			<View className='grow w-80'>
+				<View className="py-8 px-6 h-full w-full">
+					<View className="flex flex-row pb-5 h-full">
 						<View className="flex flex-row basis-full gap-6">
-							<View className="basis-full bg-auxiliary shadow-lg p-8 rounded-xl" >
+							<View className="basis-full bg-shiro shadow-lg p-8 rounded-xl" >
 								<View className="sm:pr-8">
 									<DataTable mapping={tableMapping} data={result}/>
 								</View>
@@ -46,7 +47,7 @@ const List = () => {
 				</View>
 				<Navigation/>
 			</View>
-		</>
+		</View>
 	)
 }
 
