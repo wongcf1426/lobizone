@@ -31,4 +31,4 @@ export const order_detail = [
 VALUES (1, 1, 1, 10),(1, 2, 1, 15),(1, 3, 1, 20),(1, 5, 20, 1),(2, 5, 20, 1),(2, 3, 2, 15),(2, 4, 2, 25);*/
 
 export const event_log = [];
-/*CREATE TABLE IF NOT EXISTS event_log (id INTEGER PRIMARY KEY AUTOINCREMENT, code INT, message TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)*/
+/*CREATE TABLE IF NOT EXISTS event_log (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT, message TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)*/

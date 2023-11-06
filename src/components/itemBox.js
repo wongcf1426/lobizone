@@ -27,15 +27,15 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 			<View className={(viewType == 'grid' ? 'basis-1/3 ' : 'basis-full border-b border-auxiliary ') + ""}>
 				<View className={(
 					viewType == 'grid' ? 'shadow-lg rounded-xl m-2 p-8 pb-4 ' : (
-						viewType == 'list' ? 'shadow-lg rounded-xl m-1 flex flex-row p-4 ' : 
+						viewType == 'list' ? 'shadow-lg rounded-xl m-1 flex flex-row p-4 ' :
 						'flex flex-row p-4 '
 						)
-					) + (itemActivate == 1 ? "bg-shiro" : "bg-grey") 
+					) + (itemActivate == 1 ? "bg-shiro" : "bg-grey")
 				}>
 					<Image
 						className={(
 							viewType == 'grid' ? 'w-full h-[100px] ' : (
-								viewType == 'list' ? 'basis-1/6 h-[100px] rounded-xl ' : 
+								viewType == 'list' ? 'basis-1/6 h-[100px] rounded-xl ' :
 								'basis-1/6 h-[50px] max-w-[50px] rounded-xl '
 								)
 							) + "block mx-auto my-auto"
@@ -44,7 +44,7 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 					/>
 					<View className={(
 						viewType == 'grid' ? 'h-[80px]' : (
-							viewType == 'list' ? 'basis-1/3 pl-4 h-[100px] ' : 
+							viewType == 'list' ? 'basis-1/2 pl-4 h-[100px] ' :
 							'basis-1/3 pl-2 h-[80px] '
 						)
 						) + "pt-2 overflow-hidden"
@@ -54,13 +54,19 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 						{(viewType !== 'list') && <Text className={(viewType == 'mini-list' ? 'text-base ' : 'text-xl ') + "text-primary font-bold"}>$ {data.price}</Text>}
 						{(viewType == 'list') && <Text className="text-kuro text-m text-clip">{data.description}</Text>}
 					</View>
-					{editable &&
+					{viewType == 'list'||viewType == 'mini-list' &&
+						(editable ?
 						<View className='basis-1/2 pl-1 '>
 							<View className="mt-auto mb-auto w-full h-[40px]">
 								<NumberInput num={data.qty} onChangeFunc={(value) => updateQty(value)}/>
-
+							</View>
+						</View>:
+						<View className='basis-1/2 pl-1 '>
+							<View className="mt-auto mb-auto w-full h-[40px]">
+								<NumberInput num={data.qty} onChangeFunc={function(){}}/>
 							</View>
 						</View>
+						)
 					}
 					{viewType == 'list' &&
 						<View className='basis-1/6 pl-4'>
@@ -72,15 +78,7 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 							<Text className={(itemActivate == 1 ? 'text-primary ' : 'text-shiro ') + 'mt-auto mb-auto text-xl font-bold text-center'}>$ {data.price}</Text>
 						</View>
 					}
-					{viewType == 'list' &&
-						<View className='basis-1/6'>
-							<View className="mt-auto mb-auto text-right pr-2">
-								<Text className={itemActivate == 1 ? 'text-primary ' : 'text-shiro '}>
-									<MaterialIcons name="edit" size={26} />
-								</Text>
-							</View>
-						</View>
-					}
+
 				</View>
 			</View>
 		</TouchableWithoutFeedback>

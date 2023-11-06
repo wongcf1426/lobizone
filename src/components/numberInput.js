@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text, TouchableWithoutFeedback, TextInput } from "react-native";
 
-const NumberInput = ({num, onChangeFunc}) => {
+const NumberInput = ({num, enableTextInput=false, onChangeFunc}) => {
   const updateText= (value)=>{
     onChangeFunc(value)
   }
@@ -13,13 +13,16 @@ const NumberInput = ({num, onChangeFunc}) => {
         </TouchableWithoutFeedback>
       </View>
       <View className='basis-1/3 border-2 border-auxiliary'>
-        {/*<TextInput
-          className='text-l text-kuro text-center font-semibold my-auto'
-          keyboardType='numeric'
-          onChangeText={(text)=> updateText(text)}
-          value={num}
-        />*/}
-        <Text className="text-l text-kuro text-center font-semibold my-auto">{num}</Text>
+        {enableTextInput ?
+          <TextInput
+            className='text-l text-kuro text-center font-semibold my-auto'
+            keyboardType='numeric'
+            onChangeText={(text)=> updateText(text)}
+            value={num}
+          />
+          :
+          <Text className="text-l text-kuro text-center font-semibold my-auto">{num}</Text>
+        }
       </View>
       <View className='basis-1/3 bg-accent rounded-r-xl align-middle'>
         <TouchableWithoutFeedback onPress={() => updateText('plus')}>

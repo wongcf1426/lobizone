@@ -59,9 +59,9 @@ const Cart = () => {
 				var tmpCart = []
 				await prevCart.map(function(el, i){
 					if(el.id != itemData.id){
-					tmpCart.push(el)
+						tmpCart.push(el)
 					}else {
-					tmpCart.push(tmp)
+						tmpCart.push(tmp)
 					}
 				})
 				await setCartList(tmpCart)
@@ -104,12 +104,12 @@ const Cart = () => {
 				<Navigation currentScreen='Cart'/>
 			</View>
 			<View className='grow w-80'>
-				<View className="py-6 px-6 h-full w-full">
+				<View className="py-8 px-6 h-full w-full">
 					<View className="flex flex-row pb-5 h-full">
 						<View className="basis-8/12" >
-							{/*<View className="bg-primary shadow-lg p-4 rounded-xl m-2 " >
-								<Text className="text-shiro text-xl font-bold">Tag/ Searching Box</Text>
-							</View>*/}
+							<View className="bg-primary shadow-lg p-4 rounded-xl m-2 " >
+								<Text className="text-shiro text-xl font-bold">購物車</Text>
+							</View>
 							<ScrollView>
 								<View className="flex flex-row flex-wrap pb-5">
 									{itemsList.map(function(itemData, i){
@@ -130,7 +130,7 @@ const Cart = () => {
 									</ScrollView>
 								</View>
 								<View className="h-[10%] flex flex-row flex-wrap justify-between w-full">
-									<Text className="text-kuro text-2xl font-bold">Total</Text>
+									<Text className="text-kuro text-2xl font-bold">總金額</Text>
 									<Text className="text-primary text-2xl font-bold">{
 										cartList.reduce((accumulator, object) => {
 											return accumulator + object.itemPrice;
@@ -141,7 +141,7 @@ const Cart = () => {
 									<View className="basis-1/4" >
 										<View className='items-end mr-2'>
 										<TouchableWithoutFeedback onPress={()=>{resetCartItem();}}>
-											<View className="justify-center items-center bg-focus shadow-lg p-4 rounded-xl w-full">
+											<View className="justify-center items-center bg-accent shadow-lg p-4 rounded-xl w-full">
 												<Text className="text-shiro text-l font-bold">
 													<MaterialIcons name='delete' size={24}/>
 												</Text>
@@ -153,7 +153,7 @@ const Cart = () => {
 										<TouchableWithoutFeedback onPress={()=>{resetCartItem();}}>
 											<View className="justify-center items-center bg-primary shadow-lg p-4 rounded-xl w-full">
 												<Text className="text-shiro text-xl font-bold">
-													checkout
+													確定
 												</Text>
 											</View>
 										</TouchableWithoutFeedback>
@@ -162,10 +162,8 @@ const Cart = () => {
 							</View>
 						</View>
 					</View>
-
 				</View>
 			</View>
-
 		</View>
 	)
 }

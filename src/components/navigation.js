@@ -58,7 +58,7 @@ const Navigation = props => {
                     <View className="flex flex-col p-2">
                       <View className="pt-4 space-y-1 border-t border-shiro">
                         <SideNavItem icon="shopping-cart" landing="Cart"/>
-                        <SideNavItem icon="receipt" landing="List"/>
+                        <SideNavItem icon="receipt" landing="Order"/>
                         <SideNavItem icon="view-list" landing="Item"/>
                         <SideNavItem icon="bar-chart" landing="List"/>
                       </View>

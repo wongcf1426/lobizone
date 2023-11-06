@@ -4,24 +4,36 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import Navigation from '../components/navigation';
 import ItemBox from '../components/itemBox';
+import ItemDetail from '../components/itemDetail';
 
-import { getProductList, checkIsValidProduct } from '../controller/productController';
+import { getProductList } from '../controller/productController';
 
 const statusList = [{'key':1, 'status':'公開'},{'key':0, 'status':'隱藏'},{'key':2, 'status':'封存'}]
 
 const ItemList = () => {
 	const [itemsList, setitemsList] = React.useState([]);
 	const [filterStatus, setFilterStatus] = React.useState(1);
+	const detailRef = React.useRef()
 
 	async function getItemList() {
 		try {
 			var result = await getProductList(false, filterStatus);
+			console.log(result)
 			setitemsList(result);
 		} catch (err) {
 			console.log(err);
 		}
 	}
 
+	async function changeFilterStatus(newStatus) {
+		try {
+			setFilterStatus(newStatus)
+			var result = await getProductList(false, newStatus);
+			setitemsList(result);
+		} catch (err) {
+			console.log(err);
+		}
+	}
 	React.useEffect( () => {
         getItemList();
     }, []);
@@ -39,22 +51,24 @@ const ItemList = () => {
 								{
 									statusList.map(function(stausTag, i){
 										return (
-											<View key ={i} className={(filterStatus == stausTag.key ? 'bg-primary ':'bg-shiro ') + "shadow-lg px-4 py-2 rounded-xl m-2 "} >
+											<TouchableWithoutFeedback onPress={() => changeFilterStatus(stausTag.key)} key ={i}>
+											<View className={(filterStatus == stausTag.key ? 'bg-primary ':'bg-shiro ') + "shadow-lg px-4 py-2 rounded-xl m-2 "} >
 												<Text className={(filterStatus == stausTag.key ? 'text-shiro ':'text-primary ') + " text-l font-bold"}>{stausTag.status}</Text>
-											</View>);
+											</View>
+											</TouchableWithoutFeedback>);
 									})
 								}
 							</View>
 							<ScrollView>
 								<View className="flex flex-row flex-wrap pb-5">
 									{itemsList.map(function(itemData, i){
-										if(itemData.inventory > 0) return <ItemBox data={itemData} key={i} viewType='list' editable={false}/>;
+										if(itemData.inventory > 0) return <ItemBox data={itemData} key={itemData.id} viewType='list' editable={false} onPressFunc={event => detailRef.current.open(itemData.id, 'edit')}/>;
 									})}
 									<View className="pt-4 pb-2 w-[40%]">
 										<Text className="border-b-2 border-shiro text-shiro font-bold text-xl">售罄</Text>
 									</View>
 									{itemsList.map(function(itemData, i){
-										if(itemData.inventory < 1) return <ItemBox data={itemData} key={i} viewType='list' editable={false} itemActivate={0}/>;
+										if(itemData.inventory < 1) return <ItemBox data={itemData} key={itemData.id} viewType='list' editable={false} itemActivate={0} onPressFunc={event => detailRef.current.open(itemData.id, 'edit')}/>;
 									})}
 								</View>
 							</ScrollView>
@@ -62,6 +76,7 @@ const ItemList = () => {
 					</View>
 				</View>
 			</View>
+			<ItemDetail ref={detailRef}/>
 		</View>
 	)
 }

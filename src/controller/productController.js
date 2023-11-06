@@ -12,12 +12,13 @@ export const testing = async () => {
 
 export const getProductList = async (inventory=true, status=1, productIds=[]) => {
 	try {
-		var resultArray = await testingData.items.filter(function (el) {
+		var result = await dbModel.selectFrom()
+		/*var resultArray = await testingData.items.filter(function (el) {
 			return (!inventory || el.inventory > 0) &&
 				   (status == -1 || el.status == status)&&
 				   (productIds.length == 0 || productIds.includes(el.id));
-		  });
-		return resultArray;
+		  });*/
+		return result;
 	}catch (error) {
 		console.log(error)
 		return({state: 'fail'});
@@ -35,6 +36,24 @@ export const checkIsValidProduct = async (productId, qty) => {
 			if(productData.inventory >= qty && productData.status == 1) return productData
 		}
 		return 0
+
+	}catch (error) {
+		console.log(error)
+		return({state: 'fail'});
+	}
+}
+
+export const updateProductDetail = async (productId, productData) => {
+	try {
+
+	}catch (error) {
+		console.log(error)
+		return({state: 'fail'});
+	}
+}
+
+export const createProduct = async (productData) => {
+	try {
 
 	}catch (error) {
 		console.log(error)
