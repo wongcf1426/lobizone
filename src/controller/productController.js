@@ -12,7 +12,8 @@ export const testing = async () => {
 
 export const getProductList = async (inventory=true, status=1, productIds=[]) => {
 	try {
-		let result = await dbModel.selectProducts(inventory, status, productIds)
+		if(testingData.mode == 'testing') var result = testingData.items 
+		else var result = await dbModel.selectProducts(inventory, status, productIds)
 		return result;
 	}catch (error) {
 		console.log(error)
@@ -22,9 +23,19 @@ export const getProductList = async (inventory=true, status=1, productIds=[]) =>
 
 export const getProductDetail = async (productId) => {
 	try {
-		let productData = await dbModel.selectProducts(false, -1, [productId])
-		let saleDataArray = await dbModel.selectOrderDetail('', productId)
-		let eventLog = await dbModel.selectEventLog('item_'+productId)
+		if(testingData.mode == 'testing')
+		{
+			var productData = [testingData.items[0]]
+			var saleDataArray = testingData.order_detail
+			var eventLog = testingData.event_log
+		}
+		else
+		{
+			var productData = await dbModel.selectProducts(false, -1, [productId])
+			var saleDataArray = await dbModel.selectOrderDetail('', productId)
+			var eventLog = await dbModel.selectEventLog('item_'+productId)
+		}
+		
 		let amount = 0;
 		let lumpsum = 0;
 		for await (const saleData of saleDataArray) {
@@ -44,7 +55,14 @@ export const getProductDetail = async (productId) => {
 }
 export const checkIsValidProduct = async (productId, qty) => {
 	try {
-		let productData = await dbModel.selectProducts(true, 1, [productId])
+		if(testingData.mode == 'testing')
+		{
+			var productData = testingData.items
+		}
+		else
+		{
+			var productData = await dbModel.selectProducts(true, 1, [productId])
+		}
 
 		if(productData.length > 0 && qty > 0) {
 			productData = productData[0]

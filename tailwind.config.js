@@ -16,7 +16,7 @@
         'dark': '#1C1C1C',
         'grey': '#d7dcdf',
       },
-    },
+    }
   },
   plugins: [],
 };

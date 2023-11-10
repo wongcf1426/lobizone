@@ -3,11 +3,15 @@ import * as testingData from '../../store/testing';
 
 export const getOrderList = async () => {
 	try {
-		var orderArray = await dbModel.selectOrders()
+		if(testingData.mode == 'testing') var orderArray = testingData.orders 
+		else var orderArray = await dbModel.selectOrders()
+		
 		var resultArray = []
 		for await (const orderData of orderArray) {
 			var tmpObject = orderData
-			var orderDetail = await dbModel.selectOrderDetail(orderData.id)
+			if(testingData.mode == 'testing') var orderDetail = testingData.order_detail.slice(0, 4)
+			else var orderDetail = await dbModel.selectOrderDetail(orderData.id)
+			
 			var amount = 0;
 			for await (const productData of orderDetail) {
 				amount += productData.qty * productData.unit_price
@@ -24,10 +28,13 @@ export const getOrderList = async () => {
 
 export const getOrderDetail = async (order_id) => {
 	try {
-		var orderDetailArray = await dbModel.selectOrderDetail(order_id)
-		var resultArray = []
+		if(testingData.mode == 'testing') var orderDetailArray = testingData.order_detail.slice(0, 4)
+		else var orderDetailArray = await dbModel.selectOrderDetail(order_id)
+	
+		let resultArray = []
 		for await (const productData of orderDetailArray) {
-			var productDetail = await dbModel.selectProducts(false, -1, [productData.item_id])
+			if(testingData.mode == 'testing') var productDetail = [testingData.items[0]]
+			else var productDetail = await dbModel.selectProducts(false, -1, [productData.item_id])
 
 			var tmpObject = productDetail[0]
 			tmpObject.qty = productData.qty
@@ -59,7 +66,7 @@ export const createOrder = async (productArray) => {
 			if(orderDetailResult)
 			{
 				for await (const productData of productArray) {
-					var productDetail = await dbModel.deductInventory(productData.id, productData.qty)
+					await dbModel.deductInventory(productData.id, productData.qty)
 				}
 				return true
 			}else{

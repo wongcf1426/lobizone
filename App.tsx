@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator()
 export default function App() {
   //const [currentUser, setCurrentUser] = React.useState({state:true, id:2, name: 'testing'});
   return (
-      <View className="w-full h-full overflow-x-hidden" style={[styles.screen]}>
+      <View className="w-full h-full overflow-x-hidden overflow-y-hidden md:overflow-y-scroll" style={[styles.screen]}>
         <StatusBar style="dark" />
         <NavigationContainer ref={store.navigationRef}>
           <Stack.Navigator

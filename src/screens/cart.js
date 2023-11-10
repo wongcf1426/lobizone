@@ -6,17 +6,22 @@ import { useFocusEffect } from '@react-navigation/native';
 import Navigation from '../components/navigation';
 import ItemBox from '../components/itemBox';
 import LoadingBar from '../components/loadingBar';
+import MessageBox from '../components/messageBox';
 
 import { getProductList, checkIsValidProduct } from '../controller/productController';
 import { createOrder } from '../controller/orderController';
-
+import * as store from '../../store';
 
 const Cart = () => {
 	const [itemsList, setitemsList] = React.useState([]);
 	const [cartList, setCartList] = React.useState([]);
 	const [isLoading, setLoading] = React.useState(false);
+	const [showCart, setShowCart] = React.useState(false);
+	const msgBoxRef = React.useRef()
 
 	const addCartItem = async(itemId, updateQty) => {
+		msgBoxRef.current.open('testing message', 'bg-focus')
+
 		let itemData = await checkIsValidProduct(itemId, updateQty)
 		if (itemData !== 0) {
 			updateQty = parseInt(updateQty)
@@ -69,6 +74,7 @@ const Cart = () => {
 					}
 				})
 				await setCartList(tmpCart)
+				console.log(tmpCart)
 			}
 		} else {
 			removeCartItem(itemId)
@@ -122,16 +128,41 @@ const Cart = () => {
 
 
 	return (
-		<View className='bg-auxiliary w-full h-full flex flex-1 flex-row'>
-			<View className="flex-none w-16 h-full">
+		<View className='bg-auxiliary w-full h-full flex flex-1 flex-column md:flex-row'>
+			<View className="flex-none w-full md:w-16 h-auto md:h-full absolute md:relative bottom-0 md:bottom-[] z-10">
 				<Navigation currentScreen='Cart'/>
 			</View>
-			<View className='grow w-80'>
+			<View className='grow w-full md:w-80 h-full'>
 			{isLoading && <LoadingBar loading={isLoading}/>}
-				<View className="py-8 px-6 h-full w-full">
-					<View className="flex flex-row pb-5 h-full">
-						<View className="basis-8/12" >
-							<View className="bg-primary shadow-lg px-4 py-2 rounded-xl m-2 " >
+			<MessageBox ref={msgBoxRef}/>
+				<View className="py-4 md:py-8 px-6 h-[95%] md:h-full w-full">
+					{(store.device == 'mobile' && !showCart) &&
+						<TouchableWithoutFeedback onPress={()=>{setShowCart(true);}}>
+						<View className="absolute w-[60px] h-[60px] bg-accent rounded-xl z-30 bottom-8 right-5">
+							<View className='w-full h-full justify-center'>
+								<Text className="text-shiro w-[26px] mx-auto">
+									<MaterialIcons name='add-shopping-cart' size={26}/>
+								</Text>
+							</View>
+							{
+								(cartList.reduce((accumulator, object) => {
+									return accumulator + object.qty;
+								}, 0) > 0) && 
+								<View className='absolute w-[20px] h-[20px] rounded-full bg-focus top-1 right-1'>
+									<Text className="text-shiro text-xs text-center text-semibold">
+										{cartList.reduce((accumulator, object) => {
+											return accumulator + object.qty;
+										}, 0)}
+									</Text>
+								</View>
+								
+							}
+						</View>
+						</TouchableWithoutFeedback>
+					}
+					<View className="flex flex-row pb-5 h-full md:h-full">
+						<View className="basis-full md:basis-8/12" >
+							<View className="bg-primary shadow-lg px-4 py-2 rounded-xl m-2" >
 								<Text className="text-shiro text-xl font-bold">購物車</Text>
 							</View>
 							<ScrollView>
@@ -142,9 +173,18 @@ const Cart = () => {
 								</View>
 							</ScrollView>
 						</View>
-						<View className="basis-4/12" >
+						<View className={(showCart ? 'block ':'hidden ')+"md:block basis-full md:basis-4/12 absolute md:relative w-[102%] md:w-auto h-[98%] md:h-auto z-30"}>
 							<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2 items-end h-full">
 								<View className="h-[80%] pb-4 w-full">
+									{store.device == 'mobile' &&
+										<View className="w-full items-end">
+											<TouchableWithoutFeedback onPress={()=>{setShowCart(false);}}>
+											<Text className="text-grey text-l font-bold w-[32px]">
+												<MaterialIcons name='close' size={32}/>
+											</Text>
+											</TouchableWithoutFeedback>
+										</View>
+									}
 									<ScrollView>
 										<View className="flex flex-row flex-wrap w-full">
 										{cartList.map(function(itemData, i){
@@ -153,7 +193,7 @@ const Cart = () => {
 										</View>
 									</ScrollView>
 								</View>
-								<View className="h-[10%] flex flex-row flex-wrap justify-between w-full">
+								<View className="h-[8%] flex flex-row flex-wrap justify-between w-full">
 									<Text className="text-kuro text-2xl font-bold">總金額</Text>
 									<Text className="text-primary text-2xl font-bold">{
 										cartList.reduce((accumulator, object) => {
@@ -164,7 +204,7 @@ const Cart = () => {
 								<View className="h-[10%] w-full flex flex-row justify-end">
 									<View className="basis-1/4" >
 										<View className='items-end mr-2'>
-										<TouchableWithoutFeedback onPress={()=>{resetCartItem();}}>
+										<TouchableWithoutFeedback onPress={()=>{resetCartItem();setShowCart(false);}}>
 											<View className="justify-center items-center bg-accent shadow-lg p-4 rounded-xl w-full">
 												<Text className="text-shiro text-l font-bold">
 													<MaterialIcons name='delete' size={24}/>
@@ -174,10 +214,10 @@ const Cart = () => {
 										</View>
 									</View>
 									<View className="basis-1/2" >
-										<TouchableWithoutFeedback onPress={()=>{confirmCart();}}>
+										<TouchableWithoutFeedback onPress={()=>{confirmCart();setShowCart(false);}}>
 											<View className="justify-center items-center bg-primary shadow-lg p-4 rounded-xl w-full">
 												<Text className="text-shiro text-xl font-bold">
-													確定
+													<MaterialIcons name="input" size={24} />
 												</Text>
 											</View>
 										</TouchableWithoutFeedback>
