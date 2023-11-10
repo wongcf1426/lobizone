@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { View, Text, ScrollView, TouchableWithoutFeedback } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Navigation from '../components/navigation';
 import ItemBox from '../components/itemBox';
 import ItemDetail from '../components/itemDetail';
+import LoadingBar from '../components/loadingBar';
 
 import { getProductList } from '../controller/productController';
 
@@ -13,13 +14,15 @@ const statusList = [{'key':1, 'status':'公開'},{'key':0, 'status':'隱藏'},{'
 const ItemList = () => {
 	const [itemsList, setitemsList] = React.useState([]);
 	const [filterStatus, setFilterStatus] = React.useState(1);
+	const [isLoading, setLoading] = React.useState(false);
 	const detailRef = React.useRef()
 
 	async function getItemList() {
 		try {
+			setLoading(true)
 			var result = await getProductList(false, filterStatus);
-			console.log(result)
 			setitemsList(result);
+			setLoading(false)
 		} catch (err) {
 			console.log(err);
 		}
@@ -27,16 +30,21 @@ const ItemList = () => {
 
 	async function changeFilterStatus(newStatus) {
 		try {
+			setLoading(true)
 			setFilterStatus(newStatus)
 			var result = await getProductList(false, newStatus);
 			setitemsList(result);
+			setLoading(false)
 		} catch (err) {
 			console.log(err);
 		}
 	}
-	React.useEffect( () => {
-        getItemList();
-    }, []);
+
+	useFocusEffect(
+		React.useCallback(() => {
+			getItemList()
+		}, [])
+	);
 
 	return (
 		<View className='bg-auxiliary w-full h-full flex flex-1 flex-row'>
@@ -44,6 +52,7 @@ const ItemList = () => {
 				<Navigation currentScreen='Item'/>
 			</View>
 			<View className='grow w-80'>
+			{isLoading && <LoadingBar loading={isLoading}/>}
 				<View className="py-6 px-6 h-full w-full">
 					<View className="flex flex-row pb-5 h-full">
 						<View className="basis-full" >
@@ -58,17 +67,24 @@ const ItemList = () => {
 											</TouchableWithoutFeedback>);
 									})
 								}
+								<View className="grow" >
+									<TouchableWithoutFeedback onPress={() => detailRef.current.open('', 'create')}>
+										<View className="shadow-lg px-6 py-2 rounded-xl m-2 bg-shiro right-0 absolute" >
+											<Text className="text-primary text-l font-bold">新增</Text>
+										</View>
+									</TouchableWithoutFeedback>
+								</View>
 							</View>
 							<ScrollView>
 								<View className="flex flex-row flex-wrap pb-5">
 									{itemsList.map(function(itemData, i){
-										if(itemData.inventory > 0) return <ItemBox data={itemData} key={itemData.id} viewType='list' editable={false} onPressFunc={event => detailRef.current.open(itemData.id, 'edit')}/>;
+										if(itemData.inventory > 0) return <ItemBox data={itemData} key={itemData.id} viewType='list' editable={false} onPressFunc={event => detailRef.current.open(itemData.id, 'view')}/>;
 									})}
 									<View className="pt-4 pb-2 w-[40%]">
 										<Text className="border-b-2 border-shiro text-shiro font-bold text-xl">售罄</Text>
 									</View>
 									{itemsList.map(function(itemData, i){
-										if(itemData.inventory < 1) return <ItemBox data={itemData} key={itemData.id} viewType='list' editable={false} itemActivate={0} onPressFunc={event => detailRef.current.open(itemData.id, 'edit')}/>;
+										if(itemData.inventory < 1) return <ItemBox data={itemData} key={itemData.id} viewType='list' editable={false} itemActivate={0} onPressFunc={event => detailRef.current.open(itemData.id, 'view')}/>;
 									})}
 								</View>
 							</ScrollView>
@@ -76,7 +92,7 @@ const ItemList = () => {
 					</View>
 				</View>
 			</View>
-			<ItemDetail ref={detailRef}/>
+			<ItemDetail ref={detailRef} reloadFunc={()=> getItemList(0)}/>
 		</View>
 	)
 }

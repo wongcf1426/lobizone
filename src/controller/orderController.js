@@ -3,20 +3,18 @@ import * as testingData from '../../store/testing';
 
 export const getOrderList = async () => {
 	try {
-		var orderArray = await testingData.orders;
+		var orderArray = await dbModel.selectOrders()
 		var resultArray = []
-		orderArray.forEach(async (orderData) => {
+		for await (const orderData of orderArray) {
 			var tmpObject = orderData
-			var orderDetail = await testingData.order_detail.filter(function (el) {
-				return (orderData.id == el.order_id);
-			});
+			var orderDetail = await dbModel.selectOrderDetail(orderData.id)
 			var amount = 0;
-			orderDetail.forEach(async (productData) => {
+			for await (const productData of orderDetail) {
 				amount += productData.qty * productData.unit_price
-			})
+			}
 			tmpObject.amount = amount
 			resultArray.push(tmpObject)
-		});
+		}
 		return resultArray;
 	}catch (error) {
 		console.log(error)
@@ -26,27 +24,24 @@ export const getOrderList = async () => {
 
 export const getOrderDetail = async (order_id) => {
 	try {
-		var orderDetailArray = await testingData.order_detail.filter(function (el) {
-			return (order_id == el.order_id);
-		});
+		var orderDetailArray = await dbModel.selectOrderDetail(order_id)
 		var resultArray = []
-		orderDetailArray.forEach(async (productData) => {
-			var productDetail = await testingData.items.filter(function (el) {
-				return (productData.item_id == el.id);
-			});
+		for await (const productData of orderDetailArray) {
+			var productDetail = await dbModel.selectProducts(false, -1, [productData.item_id])
+
 			var tmpObject = productDetail[0]
 			tmpObject.qty = productData.qty
 			tmpObject.price = productData.unit_price
 			tmpObject.itemPrice = productData.unit_price*productData.qty
 			resultArray.push(tmpObject)
-		});
+		}
 		return resultArray;
 	}catch (error) {
 		console.log(error)
 		return({state: 'fail'});
 	}
 }
-export const updateOrderDetail = async (productData) => {
+export const updateOrderDetail = async () => {
 	try {
 
 	}catch (error) {
@@ -55,8 +50,24 @@ export const updateOrderDetail = async (productData) => {
 	}
 }
 
-export const createOrder = async (productData) => {
+export const createOrder = async (productArray) => {
 	try {
+		var orderId = await dbModel.insertOrder()
+		if(orderId)
+		{
+			var orderDetailResult = await dbModel.insertOrderDetail(orderId, productArray)
+			if(orderDetailResult)
+			{
+				for await (const productData of productArray) {
+					var productDetail = await dbModel.deductInventory(productData.id, productData.qty)
+				}
+				return true
+			}else{
+				return({state: 'fail'});
+			}
+		}else{
+			return({state: 'fail'});
+		}
 
 	}catch (error) {
 		console.log(error)

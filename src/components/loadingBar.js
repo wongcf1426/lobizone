@@ -17,7 +17,7 @@ const LoadingBar = ({loading}) => {
   Animated.loop(
     Animated.timing(animation, {
       toValue : 1,
-      duration : 3000,
+      duration : 1500,
       useNativeDriver: false,
     })
   ).start();
@@ -29,9 +29,9 @@ const LoadingBar = ({loading}) => {
   }
 
   return (
-    <View className='w-full bg-shiro h-1 z-30'>
+    <View className='absolute w-full bg-primary h-1 z-30'>
       <Animated.View style={[styles]}>
-        <View className="bg-auxiliary h-full"></View>
+        <View className="bg-accent h-full"></View>
       </Animated.View>
     </View>
   )

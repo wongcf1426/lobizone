@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { View, Text, ScrollView, TouchableWithoutFeedback } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Navigation from '../components/navigation';
 import ItemBox from '../components/itemBox';
+import LoadingBar from '../components/loadingBar';
 
 import { getProductList, checkIsValidProduct } from '../controller/productController';
+import { createOrder } from '../controller/orderController';
 
 
 const Cart = () => {
 	const [itemsList, setitemsList] = React.useState([]);
 	const [cartList, setCartList] = React.useState([]);
+	const [isLoading, setLoading] = React.useState(false);
 
 	const addCartItem = async(itemId, updateQty) => {
 		let itemData = await checkIsValidProduct(itemId, updateQty)
@@ -81,22 +85,41 @@ const Cart = () => {
 		})
 		await setCartList(tmpCart)
 	}
+
 	const resetCartItem = async() => {
 		await setCartList([])
 	}
 
+	const confirmCart = async() => {
+		setLoading(true)
+		//todo checking
+		await createOrder(cartList)
+		var result = await getProductList();
+		setitemsList(result);
+		await resetCartItem()
+		setLoading(false)
+	}
+
 	async function getItemList() {
 		try {
+			setLoading(true)
 			var result = await getProductList();
 			setitemsList(result);
+			setLoading(false)
 		} catch (err) {
 			console.log(err);
 		}
 	}
 
-	React.useEffect( () => {
-        getItemList();
-    }, []);
+	useFocusEffect(
+		React.useCallback(() => {
+			getItemList()
+			return async () => {
+				await resetCartItem()
+			};
+		}, [])
+	);
+
 
 	return (
 		<View className='bg-auxiliary w-full h-full flex flex-1 flex-row'>
@@ -104,10 +127,11 @@ const Cart = () => {
 				<Navigation currentScreen='Cart'/>
 			</View>
 			<View className='grow w-80'>
+			{isLoading && <LoadingBar loading={isLoading}/>}
 				<View className="py-8 px-6 h-full w-full">
 					<View className="flex flex-row pb-5 h-full">
 						<View className="basis-8/12" >
-							<View className="bg-primary shadow-lg p-4 rounded-xl m-2 " >
+							<View className="bg-primary shadow-lg px-4 py-2 rounded-xl m-2 " >
 								<Text className="text-shiro text-xl font-bold">購物車</Text>
 							</View>
 							<ScrollView>
@@ -150,7 +174,7 @@ const Cart = () => {
 										</View>
 									</View>
 									<View className="basis-1/2" >
-										<TouchableWithoutFeedback onPress={()=>{resetCartItem();}}>
+										<TouchableWithoutFeedback onPress={()=>{confirmCart();}}>
 											<View className="justify-center items-center bg-primary shadow-lg p-4 rounded-xl w-full">
 												<Text className="text-shiro text-xl font-bold">
 													確定

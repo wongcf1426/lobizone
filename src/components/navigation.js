@@ -37,7 +37,7 @@ const Navigation = props => {
     return(
       <TouchableWithoutFeedback onPress={() => store.navigate(landing)}>
         <View className={(props.currentScreen == landing ? 'bg-accent ': '')+"justify-center items-center py-2 relative group w-full hover:bg-accent rounded-xl"}>
-            <Text className={(store.device == 'laptop' && !isexpandSideNav ? 'hidden ': '')+"text-shiro w-fit"}>
+            <Text className="text-shiro w-fit">
               <MaterialIcons name={icon} size={26}/>
             </Text>
         </View>
@@ -67,7 +67,7 @@ const Navigation = props => {
               </View>
               <View className="bottom-0 w-full bg-accent">
                 <View className="items-center py-2 text-sm">
-                  <TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback onPress={() => store.navigate('Info')}>
                     <Text className="text-shiro"><MaterialIcons name="info-outline" size={32} /></Text>
                   </TouchableWithoutFeedback>
                 </View>

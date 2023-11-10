@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#EED2CC"
     },
     "updates": {
       "fallbackToCacheTimeout": 0,
@@ -24,9 +24,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#EED2CC"
       },
-      "package": "com.ritawcf.lobizone"
+      "package": "com.lobizone.saungan"
     },
     "web": {
       "favicon": "./assets/favicon.png"

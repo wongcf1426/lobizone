@@ -12,6 +12,7 @@ import Cart from './src/screens/cart';
 import Order from './src/screens/order';
 import Item from './src/screens/item';
 import List from './src/screens/list';
+import Info from './src/screens/info';
 
 import "./styles";
 
@@ -23,17 +24,17 @@ export default function App() {
         <StatusBar style="dark" />
         <NavigationContainer ref={store.navigationRef}>
           <Stack.Navigator
-            initialRouteName="Order"
+            initialRouteName="Cart"
             screenOptions={{
               headerShown: false,
-              animationTypeForReplace: 'push',
-              animation: 'slide_from_right'
+              animation: 'none'
             }}
           >
             <Stack.Screen name="Cart" component={Cart} />
             <Stack.Screen name="Item" component={Item} />
             <Stack.Screen name="List" component={List} />
             <Stack.Screen name="Order" component={Order} />
+            <Stack.Screen name="Info" component={Info} />
           </Stack.Navigator>
         </NavigationContainer>
       </View>

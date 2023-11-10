@@ -26,22 +26,35 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 		<TouchableWithoutFeedback onPress={() => handlePress()}>
 			<View className={(viewType == 'grid' ? 'basis-1/3 ' : 'basis-full border-b border-auxiliary ') + ""}>
 				<View className={(
-					viewType == 'grid' ? 'shadow-lg rounded-xl m-2 p-8 pb-4 ' : (
+					viewType == 'grid' ? 'shadow-lg rounded-xl m-2 p-4 pb-2 ' : (
 						viewType == 'list' ? 'shadow-lg rounded-xl m-1 flex flex-row p-4 ' :
 						'flex flex-row p-4 '
 						)
 					) + (itemActivate == 1 ? "bg-shiro" : "bg-grey")
 				}>
-					<Image
-						className={(
-							viewType == 'grid' ? 'w-full h-[100px] ' : (
-								viewType == 'list' ? 'basis-1/6 h-[100px] rounded-xl ' :
-								'basis-1/6 h-[50px] max-w-[50px] rounded-xl '
-								)
-							) + "block mx-auto my-auto"
-						}
-						source={{uri:data.thumbnail}}
-					/>
+					{data.thumbnail == '' ?
+						<View
+							className={(
+								viewType == 'grid' ? 'w-full h-[20vh] ' : (
+									viewType == 'list' ? 'basis-1/6 h-[100px] rounded-xl ' :
+									'basis-1/6 h-[50px] max-w-[50px] rounded-xl '
+									)
+								) + "block mx-auto my-auto bg-grey"
+							}
+						/>
+						:
+						<Image
+							className={(
+								viewType == 'grid' ? 'w-full h-[20vh] ' : (
+									viewType == 'list' ? 'basis-1/6 h-[100px] rounded-xl ' :
+									'basis-1/6 h-[50px] max-w-[50px] rounded-xl '
+									)
+								) + "block mx-auto my-auto"
+							}
+							source={{uri:data.thumbnail}}
+						/>
+					}
+
 					<View className={(
 						viewType == 'grid' ? 'h-[80px]' : (
 							viewType == 'list' ? 'basis-1/2 pl-4 h-[100px] ' :
@@ -63,7 +76,7 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 						</View>:
 						<View className='basis-1/2 pl-1 '>
 							<View className="mt-auto mb-auto w-full h-[40px]">
-								<NumberInput num={data.qty} onChangeFunc={function(){}}/>
+								<NumberInput num={data.qty} editable={false}/>
 							</View>
 						</View>
 						)

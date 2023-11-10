@@ -9,22 +9,22 @@ const DataTable = ({mapping, data, onPressFunc = function(){}}) => {
     }
 	return (
 	  <View className="h-full">
-		<View className="flex-row gap-4 justify-between justify-items-start w-full pb-2 h-[10%]">
+		<View className="flex-row gap-4 justify-between justify-items-start w-full h-[40px]">
 		{
 			mappingKey.map((key) => {
 				return (
 					<View className={mapping[key].colClass} key={key}>
-						<Text className={'text-lg font-extrabold justify-self-start ' + mapping[key].txtClass}>{mapping[key].title}</Text>
+						<Text className={'text-lg font-extrabold justify-self-start ' + mapping[key].titleClass}>{mapping[key].title}</Text>
 					</View>
 				);
 			})
 		}
 		</View>
-		<View className="h-[90%] pb-4 w-full">
+		<View className="h-[90%] py-3 w-full">
 			<ScrollView>
 			{data.map((rowData, rowKey) => {
 				return (
-					<TouchableWithoutFeedback onPress={() => handlePress(rowData.id)} key={rowKey}>
+					<TouchableWithoutFeedback onPress={() => handlePress(rowData.id)} key={rowKey} className="my-1">
 						<View className="flex-row gap-4 justify-between justify-items-start w-full border-b border-auxiliary py-2">
 						{
 							mappingKey.map((key) => {
