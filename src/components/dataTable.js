@@ -9,7 +9,7 @@ const DataTable = ({mapping, data, onPressFunc = function(){}}) => {
     }
 	return (
 	  <View className="h-full">
-		<View className="flex-row gap-4 justify-between justify-items-start w-full h-[40px]">
+		<View className="flex-row gap-4 justify-between justify-items-start w-full min-h-[40px]">
 		{
 			mappingKey.map((key) => {
 				return (
@@ -20,7 +20,7 @@ const DataTable = ({mapping, data, onPressFunc = function(){}}) => {
 			})
 		}
 		</View>
-		<View className="h-[90%] py-3 w-full">
+		<View className="h-[90%] py-1 md:py-3 w-full">
 			<ScrollView>
 			{data.map((rowData, rowKey) => {
 				return (

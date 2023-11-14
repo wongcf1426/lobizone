@@ -28,17 +28,17 @@ const Navigation = props => {
                   <View className="flex flex-col p-2">
                     <View className="pt-4 space-y-1 border-t border-shiro">
                       <SideNavItem icon="shopping-cart" landing="Cart"/>
-                      <SideNavItem icon="receipt" landing="Order"/>
                       <SideNavItem icon="view-list" landing="Item"/>
-                      <SideNavItem icon="bar-chart" landing="List"/>
+                      <SideNavItem icon="receipt" landing="Order"/>
+                      <SideNavItem icon="bar-chart" landing="Stat"/>
                     </View>
                   </View>
               </View>
             </View>
             <View className="bottom-0 w-full bg-accent">
               <View className="items-center py-2 text-sm">
-                <TouchableWithoutFeedback onPress={() => store.navigate('Info')}>
-                  <Text className="text-shiro"><MaterialIcons name="info-outline" size={32} /></Text>
+                <TouchableWithoutFeedback onPress={() => store.navigate('Settings')}>
+                  <Text className="text-shiro"><MaterialIcons name="settings" size={32} /></Text>
                 </TouchableWithoutFeedback>
               </View>
             </View>
@@ -63,10 +63,10 @@ const Navigation = props => {
       <View className="absolute w-full bg-primary bottom-0 z-10 h-[55px] px-6 pl-9">
         <View className="flex-row grow gap-4 justify-between h-full pt-2">
             <BottomNavItem icon="shopping-cart" landing="Cart"/>
-            <BottomNavItem icon="receipt" landing="Order"/>
             <BottomNavItem icon="view-list" landing="Item"/>
-            <BottomNavItem icon="bar-chart" landing="List"/>
-            <BottomNavItem icon="info-outline" landing="Info"/>
+            <BottomNavItem icon="receipt" landing="Order"/>
+            <BottomNavItem icon="bar-chart" landing="Stat"/>
+            <BottomNavItem icon="settings" landing="Settings"/>
         </View>
       </View>
     );

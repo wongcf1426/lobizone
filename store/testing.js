@@ -1,4 +1,4 @@
-export const mode = 'testing';
+export const layout_dev = false;
 export const items = [
     {id:1, name:'明信片（款A）', price:10, 'description':'postcard', thumbnail:'https://media.istockphoto.com/id/828156368/de/foto/demo.jpg?s=612x612&w=0&k=20&c=jT1TzYO-5XJYjUByI-G12oATtB6yO8QXcm1iesvlKTA=', 'inventory': 50, 'status': 1},
     {id:2, name:'明信片（款B）', price:15, 'description':'B4 size', thumbnail:'https://www.shutterstock.com/image-photo/word-demo-appearing-behind-torn-260nw-1782295403.jpg', 'inventory': 1, 'status': 1},

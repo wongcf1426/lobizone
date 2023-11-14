@@ -18,8 +18,7 @@ export const initDB = async () => {
 		const db = await openDatabase();
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -50,8 +49,7 @@ export const selectProducts = async (inventory=true, status=1, productIds=[]) =>
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -76,8 +74,7 @@ export const updateProducts = async(productId, updateObject) => {
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -104,8 +101,7 @@ export const insertProduct = async (productData) =>{
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 export const deductInventory = async(productId, qty) => {
@@ -129,21 +125,22 @@ export const deductInventory = async(productId, qty) => {
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
 //Order related
-export const selectOrders = async (status=1, orderIds=[]) =>{
+export const selectOrders = async (offset=0, status=1, orderIds=[]) =>{
 	try {
 		let whereSqlArray = [];
 		let whereSql = '';
 		if(status != -1) whereSqlArray.push('status = '+status);
 		if(orderIds.length != 0) whereSqlArray.push('id IN(' + orderIds.join(', ') + ')');
 		if(whereSqlArray.length != 0) whereSql = 'WHERE '+whereSqlArray.join(' AND ')
+		let limitSql = ''
+		if(offset != -1) limitSql='LIMIT 10 OFFSET '+ offset;
 
-		const sql =  `SELECT * FROM orders ` + whereSql + ` ORDER BY id DESC;`
+		const sql =  `SELECT * FROM orders ` + whereSql + ` ORDER BY id DESC `+limitSql+`;`
 		console.log( sql )
 		const db = await openDatabase();
 		return new Promise((resolve, reject) => {
@@ -159,8 +156,7 @@ export const selectOrders = async (status=1, orderIds=[]) =>{
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -188,8 +184,7 @@ export const selectOrderDetail = async (orderId = '', productId='') =>{
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -211,8 +206,7 @@ export const insertOrder = async () =>{
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -239,15 +233,14 @@ export const insertOrderDetail = async (order_id, productArray) =>{
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
 //eventLog related
 export const insertEventLog = async(code, message) => {
 	try {
-		const sql = `INSERT INTO event_log ('code', 'message', 'created_at') VALUES ('`+code+`', '`+message+`', datetime('now', 'localtime'));`
+		const sql = `INSERT INTO event_log ('code', 'message', 'created_at') VALUES ('`+code+`', '`+JSON.stringify(message)+`', datetime('now', 'localtime'));`
 		console.log( sql )
 		const db = await openDatabase();
 		return new Promise((resolve, reject) => {
@@ -263,8 +256,7 @@ export const insertEventLog = async(code, message) => {
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }
 
@@ -291,8 +283,79 @@ export const selectEventLog = async (code='') =>{
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
+	}
+}
+
+export const countTableRow= async (tbl='items', whereSql='WHERE 1', column='id') =>{
+	try {
+		const sql =  `SELECT COUNT(`+column+`) as total FROM ` +tbl+ ` ` + whereSql
+		console.log( sql )
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet.rows._array[0].total)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
+//Stat
+export const sumStat = async(productIds=[], groupBy = '', orderBy = '', limit=-1) => {
+	try {
+		var whereSqlArray = [];
+		var whereSql = '';
+
+		if(productIds.length != 0) whereSqlArray.push('od.item_id IN(' + productIds.join(', ') + ')');
+
+		if(whereSqlArray.length != 0) whereSql = 'WHERE '+whereSqlArray.join(' AND ')
+
+		var limitSql = ''
+		if(limit != -1) limitSql='LIMIT '+ limit;
+
+		var groupBySql = ''
+		if(groupBy != '') groupBySql = 'GROUP BY '+groupBy;
+
+		var orderBySql = ''
+		if(orderBy != '') orderBySql = 'ORDER BY '+orderBy + ' DESC';
+
+		var selectColumnSql = 'SUM(od.qty) as amount, SUM(od.qty*od.unit_price) as lumpsum '
+		var joinSql = '';
+		if(productIds.length != 0 || groupBy == 'od.item_id')
+		{
+			selectColumnSql += ', od.item_id, p.name '
+			joinSql = 'JOIN items p ON p.id=od.item_id'
+		}
+
+
+		const sql =  `SELECT `+ selectColumnSql +` FROM order_detail od ` + joinSql + ` `+whereSql + ` `+ groupBySql + ` ` + orderBySql + ` `+limitSql+`;`
+
+		console.log( sql )
+
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet.rows._array)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
 	}
 }
 
@@ -300,9 +363,10 @@ export const selectEventLog = async (code='') =>{
 export const tmpDevelopSql = async() => {
 	try {
 
-		//const sql =  ``
+		const sql =  ``
 		//const sql =  `UPDATE items SET thumbnail='' WHERE id = 3`
-		const sql =  `SELECT * FROM event_log`
+		//const sql =  `SELECT * FROM event_log`
+		//const sql =  `UPDATE orders SET status = 0 WHERE 1;`
 		console.log( sql )
 
 		const db = await openDatabase();
@@ -320,7 +384,6 @@ export const tmpDevelopSql = async() => {
 		});
 
 	}catch (error) {
-		console.log(error)
-		return({state: 'fail'});
+		throw(error);
 	}
 }

@@ -11,7 +11,9 @@ import { StatusBar } from 'expo-status-bar';
 import Cart from './src/screens/cart';
 import Order from './src/screens/order';
 import Item from './src/screens/item';
-import List from './src/screens/list';
+import Settings from './src/screens/settings';
+import Stat from './src/screens/stat';
+import EventLog from './src/screens/eventLog';
 import Info from './src/screens/info';
 
 import "./styles";
@@ -24,7 +26,7 @@ export default function App() {
         <StatusBar style="dark" />
         <NavigationContainer ref={store.navigationRef}>
           <Stack.Navigator
-            initialRouteName="Cart"
+            initialRouteName="Stat"
             screenOptions={{
               headerShown: false,
               animation: 'none'
@@ -32,8 +34,10 @@ export default function App() {
           >
             <Stack.Screen name="Cart" component={Cart} />
             <Stack.Screen name="Item" component={Item} />
-            <Stack.Screen name="List" component={List} />
+            <Stack.Screen name="Stat" component={Stat} />
             <Stack.Screen name="Order" component={Order} />
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="EventLog" component={EventLog} />
             <Stack.Screen name="Info" component={Info} />
           </Stack.Navigator>
         </NavigationContainer>

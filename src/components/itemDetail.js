@@ -5,17 +5,19 @@ import { MaterialIcons } from '@expo/vector-icons';
 import DataTable from '../components/dataTable';
 import NumberInput from '../components/numberInput.js';
 import LoadingBar from '../components/loadingBar';
+import MessageBox from '../components/messageBox';
 
 import { getProductDetail, updateProductDetail, createProduct } from '../controller/productController';
 import * as store from '../../store';
 
-const defaultItemData = {id:0, name:'', price:0, 'description':'', thumbnail:'', 'inventory': 0, 'status': 1}
+const defaultItemData = {id:0, name:'', price:0, 'description':'', thumbnail:'', 'inventory': 0, 'status': 1, 'statData':{'amount':0, 'lumpsum':0}, eventLog:[]}
 
 const ItemDetail = (props, ref) => {
 	const [display, setDisplay] = React.useState(false);
 	const [action, setAction] = React.useState('create');
-	const [itemData, setItemData] = React.useState([defaultItemData]);
+	const [itemData, setItemData] = React.useState(defaultItemData);
 	const [isLoading, setLoading] = React.useState(false);
+	const msgBoxRef = React.useRef()
 
 	let tableMapping = {'created_at': {title:'時間', colClass:'w-5/12 ', txtClass:'text-kuro text-sm', titleClass:'text-kuro text-base font-semibold'}, 'message': {title:'修改紀錄', colClass:'w-7/12 ', txtClass:'text-kuro text-sm', titleClass:'text-kuro text-base font-semibold'}}
 
@@ -29,37 +31,43 @@ const ItemDetail = (props, ref) => {
 		setAction(action)
 		if(action == 'edit' || action == 'view') {
 			var result = await getProductDetail(itemId);
-			await setItemData(result);
+			if(result.state == 'success'){
+				await setItemData(result.data);
+			}
+			else {
+				msgBoxRef.current.open(result.errMsg, 'bg-focus')
+				hideModal()
+			}
 		}
 		await setDisplay(true)
-		setLoading(false)
 	}
 
 	const hideModal = async() => {
 		setLoading(true)
-		await setItemData([defaultItemData])
+		await setItemData(defaultItemData)
 		await props.reloadFunc();
 		setDisplay(false)
 		setLoading(false)
 	}
 
 	const updateData = async(field, value)=>{
-		let prevData = [...itemData];
+		let prevData = {}
+		Object.assign(prevData, itemData)
 		if((field == 'price' || field == 'inventory') && (value == 'minus' || value == 'plus'))
 		{
 			//check if prev isNAN -> auto 1
-			if(isNaN(parseFloat(prevData[0][field]))){
-				prevData[0][field] = 1
+			if(isNaN(parseFloat(prevData[field]))){
+				prevData[field] = 1
 			}else if(field == 'price')
 			{
-				if(value == 'minus') prevData[0][field] = parseFloat(prevData[0][field]) - 1
-				else prevData[0][field] = parseFloat(prevData[0][field]) + 1
+				if(value == 'minus') prevData[field] = parseFloat(prevData[field]) - 1
+				else prevData[field] = parseFloat(prevData[field]) + 1
 			}else{
-				if(value == 'minus') prevData[0][field] = parseInt(prevData[0][field]) - 1
-				else prevData[0][field] = parseInt(prevData[0][field]) + 1
+				if(value == 'minus') prevData[field] = parseInt(prevData[field]) - 1
+				else prevData[field] = parseInt(prevData[field]) + 1
 			}
 		}else{
-			prevData[0][field] = value
+			prevData[field] = value
 		}
 
 		await setItemData(prevData)
@@ -70,35 +78,56 @@ const ItemDetail = (props, ref) => {
 			setLoading(true)
 			//do validation
 			var validFlag = true
-			var currItemData = [...itemData]
-			currItemData = currItemData[0]
-			if(currItemData.name == '' || currItemData.price == ''|| isNaN(parseFloat(currItemData.price))|| parseFloat(currItemData.price) < 0||currItemData.inventory == '' || isNaN(parseInt(currItemData.inventory))||parseInt(currItemData.inventory) < 0 ||currItemData.status == '')
+			var currItemData = {}
+			Object.assign(currItemData, itemData)
+			delete currItemData.eventLog;
+			delete currItemData.statData;
+
+			let validMsg='';
+			if(currItemData.name == '')
 			{
 				validFlag = false;
+				validMsg='Name cannot be black'
+			}else if(parseFloat(currItemData.price) < 0 || (isNaN(parseFloat(currItemData.price)) && parseFloat(currItemData.price) !=0)){
+				validFlag = false;
+				validMsg='Invalid price'
+			}else if(parseInt(currItemData.inventory) < 0 || (parseInt(currItemData.inventory) != 0 && isNaN(parseInt(currItemData.inventory))))
+			{
+				validFlag = false;
+				validMsg='Invalid inventory'
+			}else if(parseInt(currItemData.status) != 0 && isNaN(currItemData.status))
+			{
+				validFlag = false;
+				validMsg='Invalid status'
 			}
+
 			if(validFlag)
 			{
-				console.log('valid pass')
-				let saveStatus = false;
 				let id = currItemData.id
 				if(action == 'edit')
 				{
 					delete currItemData.id;
-					saveStatus = await updateProductDetail(id, currItemData)
-					if(saveStatus) {
-						displayModal(saveStatus, 'view')
+					let saveStatus = await updateProductDetail(id, currItemData)
+					if(saveStatus.state == 'success') {
+						msgBoxRef.current.open('item updated', 'bg-primary')
+						displayModal(saveStatus.data, 'view')
+					}else{
+						msgBoxRef.current.open(saveStatus.errMsg, 'bg-focus')
 					}
 
 				}else{
 					delete currItemData.id;
-					saveStatus = await createProduct(currItemData)
-					if(saveStatus) {
+					let saveStatus = await createProduct(currItemData)
+					if(saveStatus.state == 'success') {
 						console.log('create success')
-						displayModal(saveStatus, 'view')
+						msgBoxRef.current.open('item created', 'bg-primary')
+						displayModal(saveStatus.data, 'view')
+					}else{
+						msgBoxRef.current.open(saveStatus.errMsg, 'bg-focus')
 					}
 				}
 			}else{
-				console.log('valid fail')
+				msgBoxRef.current.open(validMsg, 'bg-focus')
 			}
 			setLoading(false)
 		} catch (err) {
@@ -109,18 +138,28 @@ const ItemDetail = (props, ref) => {
 	return (
 		<>
 		{isLoading && <LoadingBar loading={isLoading}/>}
+		<MessageBox ref={msgBoxRef}/>
 		<View className={(display ? 'flex ' : 'hidden ') + "absolute w-full h-full right-0 py-6 px-6 bg-auxiliary z-30"}>
 			<View className="h-full w-full bg-white shadow-lg px-4 py-2 rounded-xl">
 				<View className="flex flex-row flex-wrap h-full">
 					<View className="basis-full justify-end flex flex-row pt-4 h-[10vh] md:h-[50px]" >
 						<View className="basis-1/3 md:basis-1/6">
-							<TouchableWithoutFeedback onPress={() => hideModal()}>
+							<TouchableWithoutFeedback onPress={()=>{hideModal();}}>
+								<Text className="text-grey text-l font-bold w-[32px]">
+								<MaterialIcons name='close' size={32}/>
+								</Text>
+							</TouchableWithoutFeedback>
+						</View>
+						<View className="basis-1/3 md:basis-1/6">
+						{action == 'edit' &&
+							<TouchableWithoutFeedback onPress={() => displayModal(itemData.id, 'view')}>
 								<View className="justify-center items-center bg-shiro border-2 border-primary shadow-lg px-3 py-1 rounded-xl">
 									<Text className="text-primary text-base md:text-xl">
 										取消
 									</Text>
 								</View>
 							</TouchableWithoutFeedback>
+						}
 						</View>
 						<View className="basis-1/3 md:basis-1/6">
 							{action == 'view' ?
@@ -142,15 +181,15 @@ const ItemDetail = (props, ref) => {
 							}
 						</View>
 					</View>
-					<View className="basis-full flex flex-row pt-4 h-[calc(100%-82px)] flex-wrap" >
+					<View className="basis-full flex flex-row pt-4 h-[95%] flex-wrap" >
 						<View className="basis-full md:basis-1/4 flex flex-row md:block">
-						{itemData[0].thumbnail == '' ?
+						{itemData.thumbnail == '' ?
 							<View
 								className="w-full h-[8vh] md:h-[30vh] rounded-xl p-8 bg-grey basis-1/3 mr-2 md:mr-0"
 							/>:
 							<Image
 								className="w-full h-[8vh] md:h-[30vh] rounded-xl p-8 basis-1/3 mr-2 md:mr-0"
-								source={{uri:itemData[0].thumbnail}}
+								source={{uri:itemData.thumbnail}}
 							/>
 						}
 							<View className="flex flex-row flex-wrap basis-2/3 border-l-2 md:border-l-0 border-grey">
@@ -165,7 +204,7 @@ const ItemDetail = (props, ref) => {
 											</Text>
 										</View>
 										<View className='w-2/3 rounded-r-xl align-middle border-2 border-primary py-1 text-center'>
-											<Text className="text-kuro text-m text-center">{itemData[0].amount}</Text>
+											<Text className="text-kuro text-m text-center">{itemData.statData.amount}</Text>
 										</View>
 									</View>
 								</View>
@@ -177,7 +216,7 @@ const ItemDetail = (props, ref) => {
 											</Text>
 										</View>
 										<View className='w-2/3 rounded-r-xl align-middle border-2 border-primary py-1 text-center'>
-											<Text className="text-kuro text-m text-center">{itemData[0].lumpsum}</Text>
+											<Text className="text-kuro text-m text-center">{itemData.statData.lumpsum}</Text>
 										</View>
 									</View>
 								</View>
@@ -188,55 +227,71 @@ const ItemDetail = (props, ref) => {
 								<View className="h-full w-full flex flex-row flex-wrap">
 									<View className="basis-full flex flex-row flex-wrap">
 										<View className="basis-1/3 rounded-xl text-l text-kuro justify-center h-[50px] border-2 border-grey p-2 bg-grey">
-											<Text>{itemData[0].id}</Text>
+											<Text>{itemData.id}</Text>
+										</View>
+										<View className="basis-2/3 h-[50px] w-full flex flex-row px-8 py-1">
+											{
+												action == 'view' ?
+												<View className={(itemData.status == 1 ? 'bg-grey ': 'bg-shiro ')+'border-grey border-2 rounded-3xl h-full w-full justify-center'}>
+													<Text className={(itemData.status == 1 ? 'text-shiro ': 'text-grey ') + 'text-base font-semibold text-center'}>
+													{store.statusList.find(obj => {return obj.key == itemData.status}).status}
+													</Text>
+												</View>
+												:
+												<TouchableWithoutFeedback onPress={() => updateData('status', (itemData.status == 1 ? 0: 1))}>
+													<View className={(itemData.status == 1 ? 'bg-primary ': 'bg-shiro ')+'border-primary border-2 rounded-3xl h-full w-full justify-center'}>
+														<Text className={(itemData.status == 1 ? 'text-shiro ': 'text-primary ') + 'text-base font-semibold text-center'}>
+														{store.statusList.find(obj => {return obj.key == itemData.status}).status}
+														</Text>
+													</View>
+												</TouchableWithoutFeedback>
+											}
+
 										</View>
 										<View className='basis-full py-2'>
 											<Text className="pb-1">名稱  </Text>
 											{action == 'view' ?
 												<View className="basis-1/3 rounded-xl text-l text-kuro justify-center h-[50px] border-2 border-grey p-2 bg-grey">
-													<Text>{itemData[0].name}</Text>
+													<Text>{itemData.name}</Text>
 												</View>:
 												<TextInput
 													className='rounded-xl text-l text-kuro h-[50px] border-2 border-auxiliary p-2'
-													value={itemData[0].name}
+													value={itemData.name}
 													onChangeText={value => updateData('name', value)}
 												/>
 											}
-
 										</View>
 
 										<View className="basis-1/2 pt-2 pb-6 h-[70px]">
 											<Text className="pb-1">貨存  </Text>
-											<NumberInput num={itemData[0].inventory} onChangeFunc={(value)=>updateData('inventory', value)} enableTextInput={true} editable={action != 'view'}/>
+											<NumberInput num={itemData.inventory} onChangeFunc={(value)=>updateData('inventory', value)} enableTextInput={true} editable={action != 'view'}/>
 										</View>
 										<View className="basis-1/2 pt-2 pb-6 h-[70px]">
 										<Text className="pb-1">價錢  </Text>
-											<NumberInput num={itemData[0].price} onChangeFunc={(value)=>updateData('price', value)} enableTextInput={true} editable={action != 'view'}/>
+											<NumberInput num={itemData.price} onChangeFunc={(value)=>updateData('price', value)} enableTextInput={true} editable={action != 'view'}/>
 										</View>
 										<View className='basis-full py-2'>
 											<Text className="pb-1">詳細  </Text>
 											{action == 'view' ?
 												<View className="basis-1/3 rounded-xl text-l text-kuro justify-center h-[100px] border-2 border-grey p-2 bg-grey">
-													<Text>{itemData[0].description}</Text>
+													<Text>{itemData.description}</Text>
 												</View>:
 												<TextInput
 													multiline
 													numberOfLines={4}
 													className='rounded-xl text-l text-kuro border-2 border-auxiliary p-2'
-													value={itemData[0].description}
+													value={itemData.description}
 													onChangeText={value => updateData('description', value)}
 												/>
 											}
 										</View>
 									</View>
-									{ (action == 'view' && itemData[0]?.eventLog) &&
+									{ (action == 'view' && itemData?.eventLog) &&
 										<>
-										{store.device != 'mobile' &&
 											<View className='border-b-2 border-grey p-2 pb-3 basis-full'></View>
-										}
-										<View className='p-2 basis-full'>
-											<DataTable mapping={tableMapping} data={itemData[0].eventLog} />
-										</View>
+											<View className='p-2 basis-full'>
+												<DataTable mapping={tableMapping} data={itemData.eventLog} />
+											</View>
 										</>
 									}
 								</View>

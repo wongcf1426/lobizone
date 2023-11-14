@@ -20,10 +20,9 @@ const Cart = () => {
 	const msgBoxRef = React.useRef()
 
 	const addCartItem = async(itemId, updateQty) => {
-		msgBoxRef.current.open('testing message', 'bg-focus')
 
 		let itemData = await checkIsValidProduct(itemId, updateQty)
-		if (itemData !== 0) {
+		if (itemData?.data) {
 			updateQty = parseInt(updateQty)
 			let prevCart = [...cartList];
 			let existFlag = await prevCart.filter(function (el) {
@@ -33,17 +32,19 @@ const Cart = () => {
 				updateQty += parseInt(existFlag[0].qty)
 				updateCartItem(itemId, updateQty)
 			}else{
-				let itemPrice = updateQty*parseFloat(itemData.price)
+				let itemPrice = updateQty*parseFloat(itemData.data.price)
 				let tmp = {
-					id: itemData.id,
-					name: itemData.name,
-					price: itemData.price,
-					thumbnail: itemData.thumbnail,
+					id: itemData.data.id,
+					name: itemData.data.name,
+					price: itemData.data.price,
+					thumbnail: itemData.data.thumbnail,
 					qty: updateQty,
 					itemPrice: itemPrice
 				}
 				await setCartList([tmp, ...cartList])
 			}
+		}else{
+			msgBoxRef.current.open(itemData.errMsg, 'bg-focus')
 		}
 	}
 
@@ -53,21 +54,21 @@ const Cart = () => {
 		if(updateQty > 0)
 		{
 			let itemData = await checkIsValidProduct(itemId, updateQty)
-			if (itemData !== 0) {
+			if (itemData?.data) {
 				let prevCart = [...cartList];
-				let itemPrice = updateQty*parseFloat(itemData.price)
+				let itemPrice = updateQty*parseFloat(itemData.data.price)
 				let tmp = {
-					id: itemData.id,
-					name: itemData.name,
-					price: itemData.price,
-					thumbnail: itemData.thumbnail,
+					id: itemData.data.id,
+					name: itemData.data.name,
+					price: itemData.data.price,
+					thumbnail: itemData.data.thumbnail,
 					qty: updateQty,
 					itemPrice: itemPrice
 				}
 
 				var tmpCart = []
 				await prevCart.map(function(el, i){
-					if(el.id != itemData.id){
+					if(el.id != itemData.data.id){
 						tmpCart.push(el)
 					}else {
 						tmpCart.push(tmp)
@@ -75,6 +76,8 @@ const Cart = () => {
 				})
 				await setCartList(tmpCart)
 				console.log(tmpCart)
+			}else{
+				msgBoxRef.current.open(itemData.errMsg, 'bg-focus')
 			}
 		} else {
 			removeCartItem(itemId)
@@ -99,10 +102,18 @@ const Cart = () => {
 	const confirmCart = async() => {
 		setLoading(true)
 		//todo checking
-		await createOrder(cartList)
-		var result = await getProductList();
-		setitemsList(result);
-		await resetCartItem()
+		if(cartList.length > 0)
+		{
+			let orderResult = await createOrder(cartList)
+			if(orderResult.state == 'success') {
+				msgBoxRef.current.open('order created', 'bg-primary')
+				var result = await getProductList();
+				if(result?.data) setitemsList(result.data);
+				await resetCartItem()
+			}else{
+				msgBoxRef.current.open(orderResult.errMsg, 'bg-focus')
+			}
+		}
 		setLoading(false)
 	}
 
@@ -110,7 +121,7 @@ const Cart = () => {
 		try {
 			setLoading(true)
 			var result = await getProductList();
-			setitemsList(result);
+			if(result?.data) setitemsList(result.data);
 			setLoading(false)
 		} catch (err) {
 			console.log(err);
@@ -147,7 +158,7 @@ const Cart = () => {
 							{
 								(cartList.reduce((accumulator, object) => {
 									return accumulator + object.qty;
-								}, 0) > 0) && 
+								}, 0) > 0) &&
 								<View className='absolute w-[20px] h-[20px] rounded-full bg-focus top-1 right-1'>
 									<Text className="text-shiro text-xs text-center text-semibold">
 										{cartList.reduce((accumulator, object) => {
@@ -155,7 +166,7 @@ const Cart = () => {
 										}, 0)}
 									</Text>
 								</View>
-								
+
 							}
 						</View>
 						</TouchableWithoutFeedback>

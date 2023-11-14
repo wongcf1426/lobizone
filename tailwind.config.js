@@ -14,7 +14,8 @@
         'auxiliary': '#EAE6E5',
         'shiro': '#f9fcff',
         'dark': '#1C1C1C',
-        'grey': '#d7dcdf',
+        'grey': '#d7dcdf'
+
       },
     }
   },

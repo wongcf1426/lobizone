@@ -11,7 +11,6 @@ import LoadingBar from '../components/loadingBar';
 import { getProductList } from '../controller/productController';
 import * as store from '../../store';
 
-const statusList = [{'key':1, 'status':'公開'},{'key':0, 'status':'隱藏'},{'key':2, 'status':'封存'}]
 
 const ItemList = () => {
 	const [itemsList, setitemsList] = React.useState([]);
@@ -23,7 +22,7 @@ const ItemList = () => {
 		try {
 			setLoading(true)
 			var result = await getProductList(false, filterStatus);
-			setitemsList(result);
+			if(result?.data) await setitemsList(result.data);
 			setLoading(false)
 		} catch (err) {
 			console.log(err);
@@ -35,7 +34,7 @@ const ItemList = () => {
 			setLoading(true)
 			setFilterStatus(newStatus)
 			var result = await getProductList(false, newStatus);
-			setitemsList(result);
+			if(result?.data) await setitemsList(result.data);
 			setLoading(false)
 		} catch (err) {
 			console.log(err);
@@ -60,7 +59,7 @@ const ItemList = () => {
 						<View className="basis-full" >
 							<View className='flex flex-row flex-wrap'>
 								{
-									statusList.map(function(stausTag, i){
+									store.statusList.map(function(stausTag, i){
 										return (
 											<TouchableWithoutFeedback onPress={() => changeFilterStatus(stausTag.key)} key ={i}>
 											<View className={(filterStatus == stausTag.key ? 'bg-primary ':'bg-shiro ') + "shadow-lg px-4 py-2 rounded-xl m-2 "} >

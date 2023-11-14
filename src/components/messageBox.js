@@ -17,7 +17,7 @@ const MessageBox = (props, ref) => {
     setDisplay(true)
     setTimeout(() => {
       setDisplay(false)
-    }, "3000");
+    }, 1500);
 	}
 
   return (
@@ -26,7 +26,7 @@ const MessageBox = (props, ref) => {
         transparent={true}
         visible={display}
        >
-    <View className={'absolute w-[calc(100%-80px)] h-[30px] mx-10 justify-center rounded-xl z-[999] top-3 ' + boxClass}>
+    <View className={'absolute w-[88%] h-[30px] mx-[6%] justify-center rounded-xl z-[999] top-3 ' + boxClass}>
       <View className="px-3"><Text className="text-shiro font-bold">{message}</Text></View>
     </View>
     </Modal>
