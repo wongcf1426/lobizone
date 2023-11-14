@@ -315,6 +315,8 @@ export const sumStat = async(productIds=[], groupBy = '', orderBy = '', limit=-1
 		var whereSqlArray = [];
 		var whereSql = '';
 
+		whereSqlArray.push('o.status = 1')
+
 		if(productIds.length != 0) whereSqlArray.push('od.item_id IN(' + productIds.join(', ') + ')');
 
 		if(whereSqlArray.length != 0) whereSql = 'WHERE '+whereSqlArray.join(' AND ')
@@ -329,11 +331,11 @@ export const sumStat = async(productIds=[], groupBy = '', orderBy = '', limit=-1
 		if(orderBy != '') orderBySql = 'ORDER BY '+orderBy + ' DESC';
 
 		var selectColumnSql = 'SUM(od.qty) as amount, SUM(od.qty*od.unit_price) as lumpsum '
-		var joinSql = '';
+		var joinSql = 'JOIN orders o on o.id=od.order_id ';
 		if(productIds.length != 0 || groupBy == 'od.item_id')
 		{
 			selectColumnSql += ', od.item_id, p.name '
-			joinSql = 'JOIN items p ON p.id=od.item_id'
+			joinSql += 'JOIN items p ON p.id=od.item_id'
 		}
 
 
