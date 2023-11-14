@@ -34,7 +34,7 @@ export default function App() {
           >
             <Stack.Screen name="Cart" component={Cart} />
             <Stack.Screen name="Item" component={Item} />
-            <Stack.Screen name="Stat" component={Stat} />
+            {/*<Stack.Screen name="Stat" component={Stat} />*/}
             <Stack.Screen name="Order" component={Order} />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="EventLog" component={EventLog} />

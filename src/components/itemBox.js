@@ -35,7 +35,7 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 					{data.thumbnail == '' ?
 						<View
 							className={(
-								viewType == 'grid' ? 'w-full h-[10vh] md:h-[20vh] max-h-[120px] ' : (
+								viewType == 'grid' ? 'w-full h-[10vh] md:h-[80vh] max-h-[120px] md:max-h-[500px]' : (
 									viewType == 'list' ? 'basis-1/6 h-[5vh] md:h-[100px] rounded-xl ' :
 									'basis-1/6 h-[50px] max-w-[50px] rounded-xl '
 									)
@@ -45,7 +45,7 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 						:
 						<Image
 							className={(
-								viewType == 'grid' ? 'w-full h-[10vh] md:h-[20vh] max-h-[120px] ' : (
+								viewType == 'grid' ? 'w-full h-[10vh] md:h-[80vh] max-h-[120px] md:max-h-[500px]' : (
 									viewType == 'list' ? 'basis-1/6 h-[5vh] md:h-[100px] rounded-xl ' :
 									'basis-1/6 h-[50px] max-w-[50px] rounded-xl '
 									)

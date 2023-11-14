@@ -81,7 +81,7 @@ const Order = () => {
 								<Pagination currPage={currPage} totalPages={maxPage} onPressFunc={(value) => updateCurrPage(value)}/>
 							</View>
 						</View>
-						<View className={(showDetail ? 'block ':'hidden ')+"md:block basis-full md:basis-4/12 absolute md:relative w-[102%] md:w-auto h-full md:h-auto z-30 pt-3 md:pt-0"}>
+						<View className={((!showDetail && store.device== 'mobile')  ? 'hidden ':'block ')+" md:block basis-full md:basis-4/12 absolute md:relative w-[102%] md:w-auto h-full md:h-auto z-30 pt-3 md:pt-0"}>
 							<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2 items-end h-full">
 								<View className="h-[85%] pb-4 w-full">
 									{store.device == 'mobile' &&

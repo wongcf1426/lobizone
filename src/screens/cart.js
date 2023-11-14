@@ -184,7 +184,7 @@ const Cart = () => {
 								</View>
 							</ScrollView>
 						</View>
-						<View className={(showCart ? 'block ':'hidden ')+"md:block basis-full md:basis-4/12 absolute md:relative w-[102%] md:w-auto h-[98%] md:h-auto z-30"}>
+						<View className={((!showCart && store.device== 'mobile')  ? 'hidden ':'block ')+" md:block basis-full md:basis-4/12 absolute md:relative w-[102%] md:w-auto h-[98%] md:h-auto z-30"}>
 							<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2 items-end h-full">
 								<View className="h-[80%] pb-4 w-full">
 									{store.device == 'mobile' &&
