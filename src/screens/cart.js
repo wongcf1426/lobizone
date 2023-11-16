@@ -9,6 +9,7 @@ import LoadingBar from '../components/loadingBar';
 import MessageBox from '../components/messageBox';
 
 import { getProductList, checkIsValidProduct } from '../controller/productController';
+import { getCatList } from '../controller/categoryController';
 import { createOrder } from '../controller/orderController';
 import * as store from '../../store';
 
@@ -17,10 +18,12 @@ const Cart = () => {
 	const [cartList, setCartList] = React.useState([]);
 	const [isLoading, setLoading] = React.useState(false);
 	const [showCart, setShowCart] = React.useState(false);
+
+	const [filterCategory, setFilterCategory] = React.useState(-1);
+	const [categoryList, setCategoryList] = React.useState([]);
 	const msgBoxRef = React.useRef()
 
 	const addCartItem = async(itemId, updateQty) => {
-
 		let itemData = await checkIsValidProduct(itemId, updateQty)
 		if (itemData?.data) {
 			updateQty = parseInt(updateQty)
@@ -117,11 +120,29 @@ const Cart = () => {
 		setLoading(false)
 	}
 
-	async function getItemList() {
+	const changeFilterCategory = async(catId) => {
+		setLoading(true)
+		await setFilterCategory(catId)
+		await getItemList(catId)
+		setLoading(false)
+	}
+
+	async function getItemList(catId = -1) {
 		try {
 			setLoading(true)
-			var result = await getProductList();
+			var result = await getProductList(true, 1,[],catId);
 			if(result?.data) setitemsList(result.data);
+			setLoading(false)
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	async function getCategoryList() {
+		try {
+			setLoading(true)
+			var result = await getCatList();
+			if(result?.data) setCategoryList(result.data);
 			setLoading(false)
 		} catch (err) {
 			console.log(err);
@@ -131,6 +152,7 @@ const Cart = () => {
 	useFocusEffect(
 		React.useCallback(() => {
 			getItemList()
+			getCategoryList()
 			return async () => {
 				await resetCartItem()
 			};
@@ -173,13 +195,38 @@ const Cart = () => {
 					}
 					<View className="flex flex-row pb-5 h-full md:h-full">
 						<View className="basis-full md:basis-8/12" >
-							<View className="bg-primary shadow-lg px-4 py-2 rounded-xl m-2" >
-								<Text className="text-shiro text-xl font-bold">購物車</Text>
+						<View className='flex flex-row flex-wrap'>
+							{filterCategory != -1 &&
+							<TouchableWithoutFeedback onPress={() => changeFilterCategory(-1)}>
+								<View className='bg-primary shadow-lg px-4 py-2 rounded-xl m-2'>
+									<Text className='text-shiro text-l font-bold'>
+										{categoryList.find(category => {return filterCategory== category.id}).name}
+										{'   X'}
+									</Text>
+								</View>
+							</TouchableWithoutFeedback>
+							}
+								{
+									categoryList.map(function(category, i){
+										if(filterCategory !== category.id){
+										return (
+											<TouchableWithoutFeedback onPress={() => changeFilterCategory(category.id)} key ={i}>
+											<View className='bg-shiro shadow-lg px-4 py-2 rounded-xl m-2' >
+												<Text className='text-primary text-l font-bold'>{category.name}</Text>
+											</View>
+											</TouchableWithoutFeedback>);
+										}
+									})
+								}
 							</View>
 							<ScrollView>
 								<View className="flex flex-row flex-wrap pb-5">
 									{itemsList.map(function(itemData, i){
-										return <ItemBox data={itemData} key={i} viewType='grid' editable={false} onPressFunc={event => addCartItem(itemData.id, 1)}/>;
+										let tmp = cartList.find((cartItem) => cartItem.id == itemData.id)
+										if(tmp == undefined)
+										{
+											return <ItemBox data={itemData} key={i} viewType='grid' editable={false} onPressFunc={event => addCartItem(itemData.id, 1)}/>;
+										}
 									})}
 								</View>
 							</ScrollView>

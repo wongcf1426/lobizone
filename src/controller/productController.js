@@ -10,10 +10,10 @@ export const testing = async () => {
 	}
 }
 
-export const getProductList = async (inventory=true, status=1, productIds=[]) => {
+export const getProductList = async (inventory=true, status=1, productIds=[], categoryId = -1) => {
 	try {
 		if(testingData.layout_dev) var result = testingData.items
-		else var result = await dbModel.selectProducts(inventory, status, productIds)
+		else var result = await dbModel.selectProducts(inventory, status, productIds, categoryId)
 		return ({state: 'success', data: result});
 	}catch (error) {
 		console.log(error)

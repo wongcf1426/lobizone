@@ -39,3 +39,20 @@ export const event_log = [
     {'id':5, 'code':'item_1', 'message': 'messageeeee', 'created_at': '2023-11-10 19:25:41'},
 ];
 /*CREATE TABLE IF NOT EXISTS event_log (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT, message TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)*/
+
+export const category = [
+    {'id':1, 'name':'明信片', 'status': 1},
+    {'id':2, 'name':'貼紙', 'status': 1}
+]
+/*CREATE TABLE IF NOT EXISTS category (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, status INTEGER)*/
+/*INSERT INTO category(`id`, `name`, `status`)
+VALUES (1, '明信片', 1),(2, '貼紙', 1);*/
+
+export const category_mapping = [
+    {'cat_id':1, 'item_id':1},
+    {'cat_id':1, 'item_id':2},
+    {'cat_id':2, 'item_id':3}
+]
+/*CREATE TABLE IF NOT EXISTS category_mapping (cat_id INTEGER, item_id INTEGER)*/
+/*INSERT INTO category_mapping(`cat_id`, `item_id`)
+VALUES (1, 1),(1, 2),(2, 3);*/

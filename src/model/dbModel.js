@@ -23,16 +23,22 @@ export const initDB = async () => {
 }
 
 //Item related
-export const selectProducts = async (inventory=true, status=1, productIds=[]) =>{
+export const selectProducts = async (inventory=true, status=1, productIds=[], categoryId=-1) =>{
 	try {
 		let whereSqlArray = [];
 		let whereSql = '';
-		if(inventory) whereSqlArray.push('inventory > 0');
-		if(status != -1) whereSqlArray.push('status = '+status);
-		if(productIds.length != 0) whereSqlArray.push('id IN(' + productIds.join(', ') + ')');
+		let joinSql = '';
+		if(inventory) whereSqlArray.push('i.inventory > 0');
+		if(status != -1) whereSqlArray.push('i.status = '+status);
+		if(productIds.length != 0) whereSqlArray.push('i.id IN(' + productIds.join(', ') + ')');
+
+		if(categoryId != -1) {
+			whereSqlArray.push('cm.cat_id = '+categoryId);
+			joinSql += 'JOIN category_mapping cm on cm.item_id=i.id '
+		}
 		if(whereSqlArray.length != 0) whereSql = 'WHERE '+whereSqlArray.join(' AND ')
 
-		const sql =  `SELECT * FROM items ` + whereSql + `;`
+		const sql =  `SELECT * FROM items i ` + joinSql + whereSql + `;`
 		console.log( sql )
 
 		const db = await openDatabase();
@@ -119,6 +125,34 @@ export const deductInventory = async(productId, qty) => {
 			 	null,
 			 	(txObj, resultSet) => {
 					resolve(true)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
+//category related
+export const selectCategory= async () =>{
+	try {
+		let whereSqlArray = [];
+		let whereSql = '';
+		whereSqlArray.push('status = 1')
+		if(whereSqlArray.length != 0) whereSql = 'WHERE '+whereSqlArray.join(' AND ')
+
+		const sql =  `SELECT * FROM category ` + whereSql + `;`
+		console.log( sql )
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet.rows._array)
 				}
 			);
 			});
