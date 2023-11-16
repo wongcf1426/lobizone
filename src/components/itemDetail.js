@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { View, Text, Image, TouchableWithoutFeedback, TextInput, ScrollView } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import DataTable from '../components/dataTable';
@@ -73,9 +75,41 @@ const ItemDetail = (props, ref) => {
 		await setItemData(prevData)
 	}
 
+	const pickImage = async () => {
+		if(action != 'view')
+		{
+			let result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
+				allowsEditing: true,
+				aspect: [4, 3],
+				quality: 1,
+			});
+			if (!result.canceled) {
+				updateData('thumbnail', result.assets[0].uri);
+			}
+		}
+	};
+
+	const createImgDir = async () => {
+		const imgDataDir = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'productIMG');
+        const isDir = imgDataDir.isDirectory;
+        if (!isDir) {
+            try {
+                await FileSystem.makeDirectoryAsync(
+                    FileSystem.documentDirectory +  'productIMG',
+                    { intermediates: true }
+                );
+            } catch (e) {
+                return false
+            }
+        }
+		return FileSystem.documentDirectory +  'productIMG';
+	};
+
 	async function saveItemDetail() {
 		try {
 			setLoading(true)
+
 			//do validation
 			var validFlag = true
 			var currItemData = {}
@@ -99,6 +133,26 @@ const ItemDetail = (props, ref) => {
 			{
 				validFlag = false;
 				validMsg='Invalid status'
+			}
+
+			if(currItemData.thumbnail != '')
+			{
+				var dirPath = await createImgDir()
+				if(dirPath != false)
+				{
+					let thumbnailFile = currItemData.thumbnail;
+					let fileData = thumbnailFile.split('/');
+					let fileName = fileData[fileData.length-1];
+					await FileSystem.copyAsync({
+						from: thumbnailFile,
+						to: dirPath+'/'+fileName,
+					});
+					currItemData.thumbnail = dirPath+'/'+fileName;
+				}else
+				{
+					validFlag= false;
+					validMsg='Fail to upload image'
+				}
 			}
 
 			if(validFlag)
@@ -183,6 +237,7 @@ const ItemDetail = (props, ref) => {
 					</View>
 					<View className="basis-full flex flex-row pt-4 h-[95%] flex-wrap" >
 						<View className="basis-full md:basis-1/4 flex flex-row md:block">
+							<TouchableWithoutFeedback onPress={() => pickImage()}>
 						{itemData.thumbnail == '' ?
 							<View
 								className="w-full h-[8vh] md:h-[30vh] rounded-xl p-8 bg-grey basis-1/3 mr-2 md:mr-0"
@@ -192,6 +247,7 @@ const ItemDetail = (props, ref) => {
 								source={{uri:itemData.thumbnail}}
 							/>
 						}
+							</TouchableWithoutFeedback>
 							<View className="flex flex-row flex-wrap basis-2/3 border-l-2 md:border-l-0 border-grey">
 								{store.device !='mobile' &&
 									<View className='border-b-2 border-grey p-2 basis-full'></View>

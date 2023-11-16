@@ -362,6 +362,12 @@ export const sumStat = async(productIds=[], groupBy = '', orderBy = '', limit=-1
 }
 
 //Development
+export const resetDB = async() => {
+	const db = await openDatabase();
+	await db.closeAsync()
+	await db.deleteAsync()
+}
+
 export const tmpDevelopSql = async() => {
 	try {
 

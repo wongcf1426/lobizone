@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import Navigation from '../components/navigation';
 
+import { resetDB } from '../model/dbModel';
 import * as store from '../../store';
 
 const Settings = () => {
@@ -19,7 +20,6 @@ const Settings = () => {
 					<View className="flex flex-row pb-5 h-full">
 						<View className="basis-full" >
 							<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl h-full mx-2 py-4">
-								<ScrollView>
 								{
 									settingTable.map(function(settingItem, i){
 										return  (
@@ -34,7 +34,16 @@ const Settings = () => {
 									  );
 									})
 								}
-								</ScrollView>
+								<View className="border-t-2 border-grey mt-auto">
+								<TouchableWithoutFeedback onPress={() => resetDB()}>
+									<View className="justify-center items-center py-2 w-full flex flex-row py-3 px-2">
+										<Text className="basis-1/3 text-kuro w-fit">
+										<MaterialIcons name='remove-circle-outline' size={26}/>
+										</Text>
+										<Text className="basis-2/3">Reset DB</Text>
+									</View>
+								</TouchableWithoutFeedback>
+								</View>
 							</View>
 						</View>
 					</View>

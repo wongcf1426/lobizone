@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import LoadingBar from '../components/loadingBar';
-import Chart from '../components/piechart';
+//import Chart from '../components/piechart';
 
 import { getStatData } from '../controller/statController';
 import * as store from '../../store';
@@ -79,12 +79,12 @@ const Stat = () => {
 								<View className='flex flex-row flex-wrap mx-2'>
 								<View className="basis-full md:basis-1/2 bg-shiro shadow-lg px-4 py-2 rounded-xl">
 									<Text className="text-primary font-semibold text-xl pt-1 pb-2">銷量首五位</Text>
-									<Chart chartData={statData.rankAmount} field="amount"/>
+									{/*<Chart chartData={statData.rankAmount} field="amount"/>*/}
 								</View>
 								<View className="basis-full md:basis-0 py-3"></View>
 								<View className="basis-full md:basis-1/2 bg-shiro shadow-lg px-4 py-2 rounded-xl">
 									<Text className="text-primary font-semibold text-xl pt-1 pb-2">銷額首五位</Text>
-									<Chart chartData={statData.rankLumpsum} field="lumpsum"/>
+									{/*<Chart chartData={statData.rankLumpsum} field="lumpsum"/>*/}
 								</View>
 								</View>
 							</ScrollView>
