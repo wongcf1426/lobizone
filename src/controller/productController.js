@@ -29,11 +29,13 @@ export const getProductDetail = async (productId) => {
 			var productData = [testingData.items[0]]
 			var saleDataArray = testingData.order_detail
 			var eventLog = testingData.event_log
+			var categoryMapArray = []
 		}
 		else
 		{
 			var productData = await dbModel.selectProducts(false, -1, [productId])
 			var saleDataArray = await dbModel.sumStat([productId])
+			var categoryMapArray = await dbModel.getCategoryByProduct(productId)
 			var eventLog = await dbModel.selectEventLog('item_'+productId)
 		}
 		if(productData.length > 0 && productData[0]?.id)
@@ -46,6 +48,8 @@ export const getProductDetail = async (productId) => {
 			if(eventLog) result.eventLog = eventLog;
 			else result.eventLog = [];
 
+			if(categoryMapArray.length > 0) result.category = categoryMapArray[0]
+			else result.category = {'id': -1, 'name': '未分類'}
 
 			return {state: 'success', data: result};
 		}

@@ -8,18 +8,22 @@ import DataTable from '../components/dataTable';
 import NumberInput from '../components/numberInput.js';
 import LoadingBar from '../components/loadingBar';
 import MessageBox from '../components/messageBox';
+import DropDownInput from '../components/dropDownInput';
 
 import { getProductDetail, updateProductDetail, createProduct } from '../controller/productController';
 import * as store from '../../store';
 
-const defaultItemData = {id:0, name:'', price:0, 'description':'', thumbnail:'', 'inventory': 0, 'status': 1, 'statData':{'amount':0, 'lumpsum':0}, eventLog:[]}
+const defaultItemData = {id:0, name:'', price:0, 'description':'', thumbnail:'', 'inventory': 0, 'status': 1,'category':  {'id': -1, 'name': '未分類'}, 'statData':{'amount':0, 'lumpsum':0}, eventLog:[]}
 
 const ItemDetail = (props, ref) => {
 	const [display, setDisplay] = React.useState(false);
 	const [action, setAction] = React.useState('create');
 	const [itemData, setItemData] = React.useState(defaultItemData);
+	const [categoryList, setCategoryList] = React.useState([]);
 	const [isLoading, setLoading] = React.useState(false);
 	const msgBoxRef = React.useRef()
+
+	let thumbnailChanged = false;
 
 	let tableMapping = {'created_at': {title:'時間', colClass:'w-5/12 ', txtClass:'text-kuro text-sm', titleClass:'text-kuro text-base font-semibold'}, 'message': {title:'修改紀錄', colClass:'w-7/12 ', txtClass:'text-kuro text-sm', titleClass:'text-kuro text-base font-semibold'}}
 
@@ -31,9 +35,12 @@ const ItemDetail = (props, ref) => {
 		console.log(action + ": " + itemId)
 		setLoading(true)
 		setAction(action)
+		await getCategoryList()
+		thumbnailChanged = false
 		if(action == 'edit' || action == 'view') {
 			var result = await getProductDetail(itemId);
 			if(result.state == 'success'){
+				console.log(result.data)
 				await setItemData(result.data);
 			}
 			else {
@@ -50,6 +57,17 @@ const ItemDetail = (props, ref) => {
 		await props.reloadFunc();
 		setDisplay(false)
 		setLoading(false)
+	}
+
+	async function getCategoryList() {
+		try {
+			setLoading(true)
+			var result = await getCatList();
+			if(result?.data) setCategoryList(result.data);
+			setLoading(false)
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	const updateData = async(field, value)=>{
@@ -72,6 +90,7 @@ const ItemDetail = (props, ref) => {
 			prevData[field] = value
 		}
 
+		if(field == 'thumbnail') thumbnailChanged = true;
 		await setItemData(prevData)
 	}
 
@@ -135,7 +154,7 @@ const ItemDetail = (props, ref) => {
 				validMsg='Invalid status'
 			}
 
-			if(currItemData.thumbnail != '')
+			if(currItemData.thumbnail != '' && thumbnailChanged)
 			{
 				var dirPath = await createImgDir()
 				if(dirPath != false)
@@ -143,6 +162,10 @@ const ItemDetail = (props, ref) => {
 					let thumbnailFile = currItemData.thumbnail;
 					let fileData = thumbnailFile.split('/');
 					let fileName = fileData[fileData.length-1];
+					await FileSystem.deleteAsync({
+						fileUri: dirPath+'/'+fileName,
+						options:{idempotent:true}
+					});
 					await FileSystem.copyAsync({
 						from: thumbnailFile,
 						to: dirPath+'/'+fileName,
@@ -325,6 +348,16 @@ const ItemDetail = (props, ref) => {
 										<View className="basis-1/2 pt-2 pb-6 h-[70px]">
 										<Text className="pb-1">價錢  </Text>
 											<NumberInput num={itemData.price} onChangeFunc={(value)=>updateData('price', value)} enableTextInput={true} editable={action != 'view'}/>
+										</View>
+										<View className='basis-full py-2'>
+											<Text className="pb-1">分類  </Text>
+												<DropDownInput
+													selectedObj={itemData.category}
+													labelField='name'
+													optionList={categoryList}
+													editable={action !== 'view'}
+													onChangeFunc={(value)=>updateData('category', value)}
+												/>
 										</View>
 										<View className='basis-full py-2'>
 											<Text className="pb-1">詳細  </Text>

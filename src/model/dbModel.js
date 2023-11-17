@@ -163,6 +163,33 @@ export const selectCategory= async () =>{
 	}
 }
 
+export const getCategoryByProduct= async (productId) =>{
+	try {
+		let whereSqlArray = [];
+		let whereSql = '';
+		whereSqlArray.push('cm.item_id = '+productId)
+		if(whereSqlArray.length != 0) whereSql = 'WHERE '+whereSqlArray.join(' AND ')
+
+		const sql =  `SELECT c.id, c.name FROM category_mapping cm JOIN category c on c.id=cm.cat_id ` + whereSql + `;`
+		console.log( sql )
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet.rows._array)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
 //Order related
 export const selectOrders = async (offset=0, status=1, orderIds=[]) =>{
 	try {

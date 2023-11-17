@@ -25,7 +25,7 @@ const Info = () => {
 									<Text className="basis-full">2023/11</Text>
 								</View>
 								<View className="justify-center items-center py-2 relative group w-full rounded-xl flex flex-row px-2">
-									<Text className="basis-full">develop by sau</Text>
+									<Text className="basis-full">develop by sau_ngan@lobizone</Text>
 								</View>
 							</View>
 						</View>
