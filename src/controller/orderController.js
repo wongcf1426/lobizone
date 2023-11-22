@@ -6,7 +6,6 @@ export const getOrderList = async (page = 1) => {
 		const offset = (page - 1) * 10;
 		if(testingData.layout_dev) var orderArray = testingData.orders
 		else var orderArray = await dbModel.selectOrders(offset)
-
 		var resultArray = []
 		for await (const orderData of orderArray) {
 			var tmpObject = orderData

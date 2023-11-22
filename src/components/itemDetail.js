@@ -11,6 +11,7 @@ import MessageBox from '../components/messageBox';
 import DropDownInput from '../components/dropDownInput';
 
 import { getProductDetail, updateProductDetail, createProduct } from '../controller/productController';
+import { getCatList } from '../controller/categoryController';
 import * as store from '../../store';
 
 const defaultItemData = {id:0, name:'', price:0, 'description':'', thumbnail:'', 'inventory': 0, 'status': 1,'category':  {'id': -1, 'name': '未分類'}, 'statData':{'amount':0, 'lumpsum':0}, eventLog:[]}
@@ -35,8 +36,8 @@ const ItemDetail = (props, ref) => {
 		console.log(action + ": " + itemId)
 		setLoading(true)
 		setAction(action)
-		await getCategoryList()
 		thumbnailChanged = false
+		await getCategoryList()
 		if(action == 'edit' || action == 'view') {
 			var result = await getProductDetail(itemId);
 			if(result.state == 'success'){
@@ -63,7 +64,9 @@ const ItemDetail = (props, ref) => {
 		try {
 			setLoading(true)
 			var result = await getCatList();
-			if(result?.data) setCategoryList(result.data);
+			var listResult = [{'id': -1, 'name': '未分類'}]
+			if(result?.data) listResult = listResult.concat(result.data);
+			setCategoryList(listResult);
 			setLoading(false)
 		} catch (err) {
 			console.log(err);
@@ -261,7 +264,7 @@ const ItemDetail = (props, ref) => {
 					<View className="basis-full flex flex-row pt-4 h-[95%] flex-wrap" >
 						<View className="basis-full md:basis-1/4 flex flex-row md:block">
 							<TouchableWithoutFeedback onPress={() => pickImage()}>
-						{itemData.thumbnail == '' ?
+						{(itemData.thumbnail == '' || itemData.thumbnail == null || itemData.thumbnail == 'null') ?
 							<View
 								className="w-full h-[8vh] md:h-[30vh] rounded-xl p-8 bg-grey basis-1/3 mr-2 md:mr-0"
 							/>:

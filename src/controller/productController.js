@@ -88,7 +88,15 @@ export const updateProductDetail = async (productId, productData) => {
 		let prevResult = await dbModel.selectProducts(false, -1, [productId])
 		prevResult = prevResult[0]
 		let updateResult = await dbModel.updateProducts(productId, productData)
+
+		await dbModel.removeCategoryProductMapping(productId)
+		if(productData?.category && productData.category?.id && productData.category.id != -1)
+		{
+			await dbModel.addCategoryProductMapping(productData.category.id, productId)
+		}
+		//do update category mapping
 		if(updateResult) {
+
 			if(parseInt(prevResult.inventory) != parseInt(productData.inventory)){
 				await dbModel.insertEventLog('item_'+productId, '更新商品(id:'+productId+') 貨存 '+ prevResult.inventory +' -> '+productData.inventory)
 			}
@@ -111,7 +119,12 @@ export const updateProductDetail = async (productId, productData) => {
 export const createProduct = async (productData) => {
 	try {
 		let productId = await dbModel.insertProduct(productData)
+		//do create category mapping
 		if(productId) {
+			if(productData?.category && productData.category?.id && productData.category.id != -1)
+			{
+				await dbModel.addCategoryProductMapping(productData.category.id, productId)
+			}
 			await dbModel.insertEventLog('item_'+productId, '新增商品(id:'+productId+')')
 			return ({state: 'success', data: productId});
 		}

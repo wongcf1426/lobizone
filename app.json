@@ -2,7 +2,7 @@
   "expo": {
     "name": "sau_ngan",
     "slug": "sau_ngan",
-    "version": "1.0.0",
+    "version": "0.1",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -38,13 +38,13 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "ad4727b5-b562-4191-9289-ae9fc74b7615"
-      }
-    },
     "runtimeVersion": {
       "policy": "sdkVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e81592f2-3166-4fb7-a003-d58340139a1a"
+      }
     }
   }
 }

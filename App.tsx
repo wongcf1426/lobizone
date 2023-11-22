@@ -15,6 +15,7 @@ import Settings from './src/screens/settings';
 import Stat from './src/screens/stat';
 import EventLog from './src/screens/eventLog';
 import Info from './src/screens/info';
+import Category from './src/screens/category';
 
 import "./styles";
 
@@ -26,7 +27,7 @@ export default function App() {
         <StatusBar style="dark" />
         <NavigationContainer ref={store.navigationRef}>
           <Stack.Navigator
-            initialRouteName="Stat"
+            initialRouteName="Item"
             screenOptions={{
               headerShown: false,
               animation: 'none'
@@ -39,6 +40,7 @@ export default function App() {
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="EventLog" component={EventLog} />
             <Stack.Screen name="Info" component={Info} />
+            <Stack.Screen name="Category" component={Category} />
           </Stack.Navigator>
         </NavigationContainer>
       </View>

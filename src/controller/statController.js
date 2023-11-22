@@ -1,7 +1,7 @@
 import * as dbModel from '../model/dbModel.js'
 import * as testingData from '../../store/testing';
 
-export const getStatData = async (filter={}) => {
+export const getStatData = async (filterCategory = -1) => {
 	try {
 		if(testingData.layout_dev)
 		{
@@ -9,9 +9,15 @@ export const getStatData = async (filter={}) => {
 		}
 		else
 		{
-			var overall = await dbModel.sumStat()
-			var rankAmount = await dbModel.sumStat([], 'od.item_id', 'amount', 5)
-			var rankLumpsum = await dbModel.sumStat([], 'od.item_id', 'lumpsum', 5)
+
+			let productIds = [];
+			if(filterCategory !== -1){
+				var productMapResult = await dbModel.selectProducts(false, 1, [], filterCategory)
+				if(productMapResult) productMapResult.map((item) => productIds.push(item.id))
+			}
+			var overall = await dbModel.sumStat(productIds)
+			var rankAmount = await dbModel.sumStat(productIds, 'od.item_id', 'amount', 5)
+			var rankLumpsum = await dbModel.sumStat(productIds, 'od.item_id', 'lumpsum', 5)
 
 			let tmpAmount = await rankAmount.reduce((accumulator, object) => {
 				return accumulator + object.amount;
@@ -21,7 +27,15 @@ export const getStatData = async (filter={}) => {
 			}, 0)
 			rankAmount.push({name:'其他', amount:overall[0].amount - tmpAmount})
 			rankLumpsum.push({name:'其他', lumpsum:overall[0].lumpsum - tmpLumpsum})
-			var result= {overall: overall[0], rankAmount: rankAmount, rankLumpsum:rankLumpsum}
+
+			var rankAmountbyCat = []
+			var rankLumpsumbyCat = []
+			if(filterCategory == -1){
+				//get groupby cat
+				rankAmountbyCat = await dbModel.sumStat([], 'cm.cat_id', 'amount', 5)
+				rankLumpsumbyCat = await dbModel.sumStat([], 'cm.cat_id', 'lumpsum', 5)
+			}
+			var result= {overall: overall[0], rankAmount: rankAmount, rankLumpsum:rankLumpsum, rankAmountbyCat: rankAmountbyCat, rankLumpsumbyCat: rankLumpsumbyCat}
 		}
 		return {state: 'success', data:result};
 

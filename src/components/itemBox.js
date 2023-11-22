@@ -32,7 +32,7 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 						)
 					) + (itemActivate == 1 ? "bg-shiro" : "bg-grey")
 				}>
-					{data.thumbnail == '' ?
+					{(data.thumbnail == '' || data.thumbnail == null || data.thumbnail == 'null') ?
 						<View
 							className={(
 								viewType == 'grid' ? 'w-full h-[10vh] md:h-[80vh] max-h-[120px] md:max-h-[500px]' : (

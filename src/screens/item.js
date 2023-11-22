@@ -78,30 +78,34 @@ const ItemList = () => {
 			</View>
 			<View className='grow w-full md:w-80 h-full'>
 			{isLoading && <LoadingBar loading={isLoading}/>}
-				<View className="py-6 px-6 h-full w-full">
+				<View className="py-4 md:py-8 px-6 h-[95%] md:h-full w-full">
+					<TouchableWithoutFeedback onPress={() => detailRef.current.open('', 'create')}>
+						<View className="absolute w-[60px] h-[60px] bg-primary rounded-xl z-30 bottom-8 right-5">
+							<View className='w-full h-full justify-center'>
+								<Text className="text-shiro w-[26px] mx-auto">
+									<MaterialIcons name='add' size={26}/>
+								</Text>
+							</View>
+						</View>
+					</TouchableWithoutFeedback>
+
+
 					<View className="flex flex-row pb-5 h-full">
 						<View className="basis-full" >
 							<View className='flex flex-row flex-wrap'>
+								<View className="basis-3/4 flex flex-row">
+								<ScrollView horizontal={true}>
 								{
-									/*store.statusList.map(function(stausTag, i){
-										return (
-											<TouchableWithoutFeedback onPress={() => changeFilterStatus(stausTag.key)} key ={i}>
-											<View className={(filterStatus == stausTag.key ? 'bg-primary ':'bg-shiro ') + "shadow-lg px-4 py-2 rounded-xl m-2 "} >
-												<Text className={(filterStatus == stausTag.key ? 'text-shiro ':'text-primary ') + " text-l font-bold"}>{stausTag.status}</Text>
-											</View>
-											</TouchableWithoutFeedback>);
-									})*/
+									filterCategory != -1 &&
+									<TouchableWithoutFeedback onPress={() => changeFilterCategory(-1)}>
+										<View className='bg-primary shadow-lg px-4 py-2 rounded-xl m-2'>
+											<Text className='text-shiro text-l font-bold'>
+												{categoryList.find(category => {return filterCategory== category.id}).name}
+												{'   X'}
+											</Text>
+										</View>
+									</TouchableWithoutFeedback>
 								}
-								{filterCategory != -1 &&
-								<TouchableWithoutFeedback onPress={() => changeFilterCategory(-1)}>
-									<View className='bg-primary shadow-lg px-4 py-2 rounded-xl m-2'>
-										<Text className='text-shiro text-l font-bold'>
-											{categoryList.find(category => {return filterCategory== category.id}).name}
-											{'   X'}
-										</Text>
-									</View>
-								</TouchableWithoutFeedback>
-							}
 								{
 									categoryList.map(function(category, i){
 										if(filterCategory !== category.id){
@@ -114,10 +118,12 @@ const ItemList = () => {
 										}
 									})
 								}
-								<View className="grow" >
-									<TouchableWithoutFeedback onPress={() => detailRef.current.open('', 'create')}>
-										<View className="shadow-lg px-6 py-2 rounded-xl m-2 bg-shiro right-0 absolute" >
-											<Text className="text-primary text-l font-bold"><MaterialIcons name='add' size={22}/></Text>
+								</ScrollView>
+								</View>
+								<View className="basis-1/4" >
+									<TouchableWithoutFeedback onPress={() => store.navigate('Category')}>
+										<View className="shadow-lg px-4 py-2 rounded-xl m-2 bg-shiro right-0 absolute" >
+											<Text className="text-primary text-l font-bold"><MaterialIcons name='more-horiz' size={22}/></Text>
 										</View>
 									</TouchableWithoutFeedback>
 								</View>

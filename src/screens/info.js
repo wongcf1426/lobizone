@@ -4,7 +4,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import Navigation from '../components/navigation';
 
-
 import * as store from '../../store';
 
 const Info = () => {

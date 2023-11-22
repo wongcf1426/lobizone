@@ -196,6 +196,7 @@ const Cart = () => {
 					<View className="flex flex-row pb-5 h-full md:h-full">
 						<View className="basis-full md:basis-8/12" >
 						<View className='flex flex-row flex-wrap'>
+							<ScrollView horizontal={true}>
 							{filterCategory != -1 &&
 							<TouchableWithoutFeedback onPress={() => changeFilterCategory(-1)}>
 								<View className='bg-primary shadow-lg px-4 py-2 rounded-xl m-2'>
@@ -218,6 +219,7 @@ const Cart = () => {
 										}
 									})
 								}
+							</ScrollView>
 							</View>
 							<ScrollView>
 								<View className="flex flex-row flex-wrap pb-5">

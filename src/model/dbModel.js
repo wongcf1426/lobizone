@@ -95,7 +95,6 @@ export const insertProduct = async (productData) =>{
 				sql,
 			 	null,
 			 	(txObj, res) => {
-					console.log(res.insertId)
 					resolve(res.insertId)
 				},
 				(error) => {
@@ -110,6 +109,7 @@ export const insertProduct = async (productData) =>{
 		throw(error);
 	}
 }
+
 export const deductInventory = async(productId, qty) => {
 	try {
 		const whereSql = 'WHERE id = '+productId
@@ -136,7 +136,7 @@ export const deductInventory = async(productId, qty) => {
 }
 
 //category related
-export const selectCategory= async () =>{
+export const selectCategoryList= async () =>{
 	try {
 		let whereSqlArray = [];
 		let whereSql = '';
@@ -180,6 +180,102 @@ export const getCategoryByProduct= async (productId) =>{
 			 	null,
 			 	(txObj, resultSet) => {
 					resolve(resultSet.rows._array)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
+export const removeCategoryProductMapping= async (productId) =>{
+	try {
+
+		const sql =  `DELETE FROM category_mapping WHERE item_id=`+productId+`;`
+		console.log( sql )
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet.rows._array)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
+export const addCategoryProductMapping= async (catId, productId) =>{
+	try {
+		const sql =  `INSERT INTO category_mapping('cat_id', 'item_id') VALUES (`+catId+`, `+productId+`);`
+		console.log( sql )
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet.rows._array)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
+export const updateCategoryById = async(catId, updateObject) => {
+	try {
+		const whereSql = 'WHERE id = '+catId
+
+		const sql =  `UPDATE category SET name = "`+updateObject.name+`" `+whereSql+`;`
+		console.log( sql )
+
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, resultSet) => {
+					resolve(resultSet)
+				}
+			);
+			});
+		});
+
+	}catch (error) {
+		throw(error);
+	}
+}
+
+export const insertCategory = async (catData) =>{
+	try {
+		const sql = `INSERT INTO category ('name', 'status') VALUES ('`+catData.name+`',`+catData.status+`);`
+		console.log( sql )
+		const db = await openDatabase();
+		return new Promise((resolve, reject) => {
+			db.transaction(tx => {
+			tx.executeSql(
+				sql,
+			 	null,
+			 	(txObj, res) => {
+					resolve(res.insertId)
+				},
+				(error) => {
+				  console.log("execute error: " + error);
+				  reject(error)
 				}
 			);
 			});
@@ -397,6 +493,10 @@ export const sumStat = async(productIds=[], groupBy = '', orderBy = '', limit=-1
 		{
 			selectColumnSql += ', od.item_id, p.name '
 			joinSql += 'JOIN items p ON p.id=od.item_id'
+		}else if(groupBy == 'cm.cat_id')
+		{
+			selectColumnSql += ', cm.cat_id, c.name '
+			joinSql += 'JOIN items p ON p.id=od.item_id JOIN category_mapping cm ON cm.item_id=p.id JOIN category c ON c.id=cm.cat_id'
 		}
 
 
