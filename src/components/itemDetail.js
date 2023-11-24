@@ -103,8 +103,8 @@ const ItemDetail = (props, ref) => {
 			let result = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.All,
 				allowsEditing: true,
-				aspect: [4, 3],
-				quality: 1,
+				aspect: [1, 1],
+				quality: 0.4,
 			});
 			if (!result.canceled) {
 				updateData('thumbnail', result.assets[0].uri);
