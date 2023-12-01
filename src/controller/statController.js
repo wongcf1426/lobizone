@@ -1,5 +1,10 @@
 import * as dbModel from '../model/dbModel.js'
 import * as testingData from '../../store/testing';
+import * as FileSystem from 'expo-file-system';
+
+import * as Sharing from 'expo-sharing';
+
+import XLSX from 'xlsx';
 
 export const getStatData = async (filterCategory = -1) => {
 	try {
@@ -45,3 +50,35 @@ export const getStatData = async (filterCategory = -1) => {
 		return({state: 'fail', errMsg: error});
 	}
 }
+
+export const exportAsExcel = async () => {
+	try {
+		const fileName = 'sauNgan.csv';
+		const fileUri = FileSystem.documentDirectory + fileName;
+
+		var data = [
+			{"name":"John", "city": "Seattle"},
+			{"name":"Mike", "city": "Los Angeles"},
+			{"name":"Zach", "city": "New York"}
+			];
+
+			 var ws = XLSX.utils.json_to_sheet(data);
+
+			  var wb = XLSX.utils.book_new();
+			  XLSX.utils.book_append_sheet(wb,ws,"Prova");
+
+			  const wbout = XLSX.write(wb, {type:'base64', bookType:"csv"});
+
+			FileSystem.writeAsStringAsync(fileUri, wbout, {
+			  encoding: FileSystem.EncodingType.Base64
+			})
+			await Sharing.shareAsync(fileUri, { UTI: '.csv', mimeType: 'text/csv' });
+
+	}
+	catch (error) {
+		console.log(error)
+		await dbModel.insertEventLog('statERR', error)
+		return({state: 'fail', errMsg: error});
+	}
+}
+

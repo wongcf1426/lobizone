@@ -21,8 +21,8 @@ export const updateCat = async (catid, catData) => {
 			return ({state: 'success', data: catid});
 		}
 		else {
-			await dbModel.insertEventLog('catERR', 'update failed')
-			return ({state: 'fail', errMsg: 'update failed'});
+			await dbModel.insertEventLog('catERR', 'update failed code25')
+			return ({state: 'fail', errMsg: '錯誤: code25'});
 		}
 	}catch (error) {
 		console.log(error)
@@ -42,12 +42,12 @@ export const createCategory = async (catData) => {
 			return ({state: 'success', data: catId});
 		}
 		else {
-			await dbModel.insertEventLog('catERR', 'create failed')
-			return ({state: 'fail', errMsg: 'create failed'});
+			await dbModel.insertEventLog('catERR', 'create failed code46')
+			return ({state: 'fail', errMsg: '錯誤: code46'});
 		}
 	}catch (error) {
 		console.log(error)
 		await dbModel.insertEventLog('catERR', error)
-		return({state: 'fail, errMsg: error'});
+		return({state: 'fail', errMsg: 'error'});
 	}
 }

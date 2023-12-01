@@ -6,7 +6,7 @@ export const testing = async () => {
 		dbModel.initDB();
 	}catch (error) {
 		console.log(error)
-		return({state: 'fail'});
+		return({state: 'fail', errMsg: error});
 	}
 }
 
@@ -55,7 +55,7 @@ export const getProductDetail = async (productId) => {
 		}
 		else{
 			await dbModel.insertEventLog('productERR', error)
-			return({state: 'fail', errMsg: 'empty result'});
+			return({state: 'fail', errMsg: '錯誤: code58'});
 		}
 
 	}catch (error) {
@@ -72,9 +72,9 @@ export const checkIsValidProduct = async (productId, qty) => {
 		if(productData.length > 0 && qty > 0) {
 			productData = productData[0]
 			if(productData.inventory >= qty && productData.status == 1) return ({state: 'success', data:productData})
-			else return ({state: 'fail', errMsg: 'fail to add cart'})
+			else return ({state: 'fail', errMsg: '錯誤: 產品貨存不足'})
 		}else{
-			return ({state: 'fail', errMsg: 'empty result'})
+			return ({state: 'fail', errMsg: '錯誤: code77'})
 		}
 	}catch (error) {
 		console.log(error)
@@ -107,7 +107,7 @@ export const updateProductDetail = async (productId, productData) => {
 		}
 		else {
 			await dbModel.insertEventLog('productERR', 'update failed')
-			return ({state: 'fail', errMsg: 'update failed'});
+			return ({state: 'fail', errMsg: '錯誤: code110'});
 		}
 	}catch (error) {
 		console.log(error)

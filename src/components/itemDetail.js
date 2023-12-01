@@ -33,7 +33,6 @@ const ItemDetail = (props, ref) => {
 	}))
 
 	const displayModal = async (itemId, action) => {
-		console.log(action + ": " + itemId)
 		setLoading(true)
 		setAction(action)
 		thumbnailChanged = false
@@ -143,18 +142,18 @@ const ItemDetail = (props, ref) => {
 			if(currItemData.name == '')
 			{
 				validFlag = false;
-				validMsg='Name cannot be black'
+				validMsg='姓名必須填寫'
 			}else if(parseFloat(currItemData.price) < 0 || (isNaN(parseFloat(currItemData.price)) && parseFloat(currItemData.price) !=0)){
 				validFlag = false;
-				validMsg='Invalid price'
+				validMsg='價錢需要大於零'
 			}else if(parseInt(currItemData.inventory) < 0 || (parseInt(currItemData.inventory) != 0 && isNaN(parseInt(currItemData.inventory))))
 			{
 				validFlag = false;
-				validMsg='Invalid inventory'
+				validMsg='貨存需要大於零'
 			}else if(parseInt(currItemData.status) != 0 && isNaN(currItemData.status))
 			{
 				validFlag = false;
-				validMsg='Invalid status'
+				validMsg='狀態必須填寫'
 			}
 
 			if(currItemData.thumbnail != '' && thumbnailChanged)
@@ -177,7 +176,7 @@ const ItemDetail = (props, ref) => {
 				}else
 				{
 					validFlag= false;
-					validMsg='Fail to upload image'
+					validMsg='圖片失效'
 				}
 			}
 
@@ -189,7 +188,7 @@ const ItemDetail = (props, ref) => {
 					delete currItemData.id;
 					let saveStatus = await updateProductDetail(id, currItemData)
 					if(saveStatus.state == 'success') {
-						msgBoxRef.current.open('item updated', 'bg-primary')
+						msgBoxRef.current.open('成功更新商品', 'bg-primary')
 						displayModal(saveStatus.data, 'view')
 					}else{
 						msgBoxRef.current.open(saveStatus.errMsg, 'bg-focus')
@@ -200,7 +199,7 @@ const ItemDetail = (props, ref) => {
 					let saveStatus = await createProduct(currItemData)
 					if(saveStatus.state == 'success') {
 						console.log('create success')
-						msgBoxRef.current.open('item created', 'bg-primary')
+						msgBoxRef.current.open('成功新增商品', 'bg-primary')
 						displayModal(saveStatus.data, 'view')
 					}else{
 						msgBoxRef.current.open(saveStatus.errMsg, 'bg-focus')

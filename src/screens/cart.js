@@ -78,7 +78,6 @@ const Cart = () => {
 					}
 				})
 				await setCartList(tmpCart)
-				console.log(tmpCart)
 			}else{
 				msgBoxRef.current.open(itemData.errMsg, 'bg-focus')
 			}
@@ -109,7 +108,7 @@ const Cart = () => {
 		{
 			let orderResult = await createOrder(cartList)
 			if(orderResult.state == 'success') {
-				msgBoxRef.current.open('order created', 'bg-primary')
+				msgBoxRef.current.open('訂單成立', 'bg-primary')
 				var result = await getProductList();
 				if(result?.data) setitemsList(result.data);
 				await resetCartItem()

@@ -66,11 +66,11 @@ export const createOrder = async (productArray) => {
 				return ({state: 'success'});
 			}else{
 				await dbModel.insertEventLog('orderERR', 'failed, code 65')
-				return({state: 'fail', errMsg:'failed, code 65'});
+				return({state: 'fail', errMsg:'錯誤: code 69'});
 			}
 		}else{
 			await dbModel.insertEventLog('orderERR', 'failed, code 68')
-			return({state: 'fail', errMsg:'failed, code 68'});
+			return({state: 'fail', errMsg:'錯誤: code 73'});
 		}
 
 	}catch (error) {

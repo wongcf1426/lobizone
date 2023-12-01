@@ -78,7 +78,7 @@ const Category = () => {
 				if(id != 0) {
 					let saveStatus = await updateCat(id, currItemData)
 					if(saveStatus.state == 'success') {
-						msgBoxRef.current.open('category updated', 'bg-primary')
+						msgBoxRef.current.open('成功更新分類', 'bg-primary')
 					}else{
 						msgBoxRef.current.open(saveStatus.errMsg, 'bg-focus')
 					}
@@ -86,7 +86,7 @@ const Category = () => {
 				else{
 					let saveStatus = await createCategory(currItemData)
 					if(saveStatus.state == 'success') {
-						msgBoxRef.current.open('category created', 'bg-primary')
+						msgBoxRef.current.open('成功建立分類', 'bg-primary')
 					}else{
 						msgBoxRef.current.open(saveStatus.errMsg, 'bg-focus')
 					}
