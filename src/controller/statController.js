@@ -56,24 +56,55 @@ export const exportAsExcel = async () => {
 		const fileName = 'sauNgan.csv';
 		const fileUri = FileSystem.documentDirectory + fileName;
 
-		var data = [
-			{"name":"John", "city": "Seattle"},
-			{"name":"Mike", "city": "Los Angeles"},
-			{"name":"Zach", "city": "New York"}
-			];
+		let formatedProductList = []
+		let productList = await dbModel.selectProducts(false, -1, [], -1);
+		for await (const productData of productList) {
+			let amount = 0;
+			let lumpsum = 0;
+			let category = '未分類';
 
-			 var ws = XLSX.utils.json_to_sheet(data);
+			var saleDataArray = await dbModel.sumStat([productData.id])
+			var categoryMapArray = await dbModel.getCategoryByProduct(productData.id)
 
-			  var wb = XLSX.utils.book_new();
-			  XLSX.utils.book_append_sheet(wb,ws,"Prova");
+			if(saleDataArray.length > 0 && saleDataArray[0]?.amount) {
+				amount = saleDataArray[0]['amount']
+				lumpsum = saleDataArray[0]['lumpsum']
+			}
 
-			  const wbout = XLSX.write(wb, {type:'base64', bookType:"csv"});
+			if(categoryMapArray.length > 0) {
+				category = categoryMapArray[0]['name']
+			}
 
-			FileSystem.writeAsStringAsync(fileUri, wbout, {
-			  encoding: FileSystem.EncodingType.Base64
-			})
-			await Sharing.shareAsync(fileUri, { UTI: '.csv', mimeType: 'text/csv' });
+			let tmpProductDetail = {
+				'id': productData.id,
+				'名稱': productData.name,
+				'分類': category,
+				'貨存': productData.inventory,
+				'價錢': productData.price,
+				'詳細': productData.description,
+				'銷量': amount,
+				'銷額': lumpsum,
+			}
+			formatedProductList.push(tmpProductDetail)
+		}
 
+		var data = formatedProductList;
+		var ws = XLSX.utils.json_to_sheet(data);
+		var wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb,ws,"商品");
+
+		const wbout = XLSX.write(wb, {type:'base64', bookType:"csv"});
+
+		let fileResult = FileSystem.writeAsStringAsync(fileUri, wbout, {
+			encoding: FileSystem.EncodingType.Base64
+		})
+		if(fileResult){
+			let sharingResult = await Sharing.shareAsync(fileUri, { UTI: '.csv', mimeType: 'text/csv' });
+			return({state: 'success', data:'success'});
+		}else{
+			return({state: 'statERR', errMsg: '未能匯出資料'});
+		}
+		
 	}
 	catch (error) {
 		console.log(error)

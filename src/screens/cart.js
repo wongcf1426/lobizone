@@ -52,7 +52,6 @@ const Cart = () => {
 	}
 
 	const updateCartItem = async(itemId, updateQty) => {
-		console.log('updateCartItem: ' + itemId + ' '+updateQty)
 		updateQty = parseInt(updateQty)
 		if(updateQty > 0)
 		{

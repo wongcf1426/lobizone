@@ -12,7 +12,6 @@ const ItemBox = ({data, viewType, editable, itemActivate = 1, onPressFunc = func
 		}else if(value == 'plus'){
 			onQtyUpdateFunc(parseInt(data.qty)+1)
 		}else if(parseInt(value) != NaN){
-			console.log('itemBox: ' + value)
 			onQtyUpdateFunc(parseInt(value))
 		}else{
 			onQtyUpdateFunc(1)

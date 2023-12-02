@@ -524,9 +524,14 @@ export const sumStat = async(productIds=[], groupBy = '', orderBy = '', limit=-1
 
 //Development
 export const resetDB = async() => {
-	const db = await openDatabase();
-	await db.closeAsync()
-	await db.deleteAsync()
+	try {
+		const db = await openDatabase();
+		await db.closeAsync()
+		await db.deleteAsync()
+		return({state: 'success', data:[]});
+	}catch (error) {
+		return({state: 'fail', errMsg: '錯誤: 532'});
+	}
 }
 
 export const tmpDevelopSql = async() => {

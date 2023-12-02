@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, TouchableWithoutFeedback} from "react-native";
+import { Text, View, TouchableWithoutFeedback, Image} from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import * as store from '../../store';
 
@@ -22,7 +22,9 @@ const Navigation = props => {
           <View className='w-full bg-primary h-full flex flex-col justify-between'>
             <View className="top-3 w-full">
                 <View className="items-center w-full h-10" >
-                  <View className="w-10 h-10 bg-shiro rounded-lg"></View>
+                  <View className="w-10 h-10 bg-shiro rounded-lg overflow-hidden">
+                    <Image className="w-full h-full" source={require('../../assets/icon.png')}></Image>
+                  </View>
                 </View>
                 <View>
                   <View className="flex flex-col p-2">

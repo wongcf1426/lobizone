@@ -40,7 +40,6 @@ const ItemDetail = (props, ref) => {
 		if(action == 'edit' || action == 'view') {
 			var result = await getProductDetail(itemId);
 			if(result.state == 'success'){
-				console.log(result.data)
 				await setItemData(result.data);
 			}
 			else {
@@ -198,7 +197,6 @@ const ItemDetail = (props, ref) => {
 					delete currItemData.id;
 					let saveStatus = await createProduct(currItemData)
 					if(saveStatus.state == 'success') {
-						console.log('create success')
 						msgBoxRef.current.open('成功新增商品', 'bg-primary')
 						displayModal(saveStatus.data, 'view')
 					}else{
@@ -222,7 +220,7 @@ const ItemDetail = (props, ref) => {
 			<View className="h-full w-full bg-white shadow-lg px-4 py-2 rounded-xl">
 				<View className="flex flex-row flex-wrap h-full">
 					<View className="basis-full justify-end flex flex-row pt-4 h-[10vh] md:h-[50px]" >
-						<View className="basis-1/3 md:basis-1/6">
+						<View className="basis-1/3 md:basis-2/3">
 							<TouchableWithoutFeedback onPress={()=>{hideModal();}}>
 								<Text className="text-grey text-l font-bold w-[32px]">
 								<MaterialIcons name='close' size={32}/>
@@ -261,19 +259,21 @@ const ItemDetail = (props, ref) => {
 						</View>
 					</View>
 					<View className="basis-full flex flex-row pt-4 h-[95%] flex-wrap" >
-						<View className="basis-full md:basis-1/4 flex flex-row md:block">
-							<TouchableWithoutFeedback onPress={() => pickImage()}>
-						{(itemData.thumbnail == '' || itemData.thumbnail == null || itemData.thumbnail == 'null') ?
-							<View
-								className="w-full h-[8vh] md:h-[30vh] rounded-xl p-8 bg-grey basis-1/3 mr-2 md:mr-0"
-							/>:
-							<Image
-								className="w-full h-[8vh] md:h-[30vh] rounded-xl p-8 basis-1/3 mr-2 md:mr-0"
-								source={{uri:itemData.thumbnail}}
-							/>
-						}
-							</TouchableWithoutFeedback>
-							<View className="flex flex-row flex-wrap basis-2/3 border-l-2 md:border-l-0 border-grey">
+						<View className="basis-full md:basis-1/4 flex flex-row flex-wrap md:block">
+							<View className="basis-1/3 md:basis-full w-full h-[8vh] md:h-[120vh] px-1">
+								<TouchableWithoutFeedback onPress={() => pickImage()} className="h-full">
+									{(itemData.thumbnail == '' || itemData.thumbnail == null || itemData.thumbnail == 'null') ?
+										<View
+											className="w-full rounded-xl bg-grey mr-2 md:mr-0 md:basis-full h-[8vh] md:h-[120vh]"
+										/>:
+										<Image
+											className="w-full  rounded-xl bg-grey mr-2 md:mr-0 md:basis-full h-[8vh] md:h-[120vh]"
+											source={{uri:itemData.thumbnail}}
+										/>
+									}
+								</TouchableWithoutFeedback>
+							</View>
+							<View className="flex flex-row flex-wrap basis-2/3 md:basis-full border-l-2 md:border-l-0 border-grey md:pt-2">
 								{store.device !='mobile' &&
 									<View className='border-b-2 border-grey p-2 basis-full'></View>
 								}

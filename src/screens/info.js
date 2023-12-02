@@ -17,14 +17,14 @@ const Info = () => {
 					<View className="flex flex-row pb-5 h-full">
 						<View className="basis-full" >
 							<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl h-full mx-2 py-4">
-								<View className="justify-center items-center py-2 relative group w-full rounded-xl flex flex-row border-b-2 border-grey py-3 px-2">
-									<Text className="basis-full">SauNgan beta version</Text>
+								<View className="justify-center items-center py-2 relative group w-full flex flex-row border-b-2 border-grey py-3 px-2">
+									<Text className="basis-full">SauNgan ver beta0.1</Text>
 								</View>
-								<View className="justify-center items-center py-2 relative group w-full rounded-xl flex flex-row px-2">
-									<Text className="basis-full">2023/11</Text>
+								<View className="justify-center items-center py-2 relative group w-full flex flex-row px-2">
+									<Text className="basis-full">Build 20231202</Text>
 								</View>
-								<View className="justify-center items-center py-2 relative group w-full rounded-xl flex flex-row px-2">
-									<Text className="basis-full">develop by sau_ngan@lobizone</Text>
+								<View className="justify-center items-center py-2 relative group w-full flex flex-row px-2">
+									<Text className="basis-full">develop by sau1426@lobizone</Text>
 								</View>
 							</View>
 						</View>

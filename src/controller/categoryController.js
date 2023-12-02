@@ -34,8 +34,6 @@ export const updateCat = async (catid, catData) => {
 
 export const createCategory = async (catData) => {
 	try {
-		console.log('37' + catData)
-		//let catId = 1
 		let catId = await dbModel.insertCategory(catData)
 		if(catId) {
 			await dbModel.insertEventLog('cat_'+catId, '新增分類(id:'+catId+')')

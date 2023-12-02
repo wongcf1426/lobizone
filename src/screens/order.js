@@ -20,7 +20,7 @@ const Order = () => {
 	const [isLoading, setLoading] = React.useState(false);
 	const [showDetail, setShowDetail] = React.useState(false);
 
-	let tableMapping = {'id': {title:'ID', colClass:'w-1/12 ', txtClass:'text-kuro font-normal', titleClass:'text-primary text-xl font-semibold'}, 'created_at': {title:'交易時間', colClass:'w-1/2 ', txtClass:'text-kuro font-normal', titleClass:'text-primary text-xl font-semibold'}, 'amount': {title:'金額', colClass:'w-5/12 ', txtClass:'text-kuro font-normal', titleClass:'text-primary text-xl font-semibold'}}
+	let tableMapping = {'created_at': {title:'交易時間', colClass:'w-1/2 ', txtClass:'text-kuro font-normal', titleClass:'text-primary text-xl font-semibold'}, 'amount': {title:'金額', colClass:'w-5/12 ', txtClass:'text-kuro font-normal', titleClass:'text-primary text-xl font-semibold'}}
 
 	async function loadOrderList(page) {
 		try {

@@ -136,29 +136,37 @@ const Stat = () => {
 							<View className="py-3"></View>
 							<ScrollView>
 								<View className='flex flex-row flex-wrap mx-2'>
-									<View className="basis-full md:basis-1/2 bg-shiro shadow-lg px-4 py-2 rounded-xl">
-										<Text className="text-primary font-semibold text-xl pt-1 pb-2">商品銷量首五位</Text>
-										<BarChart chartData={statData.rankAmount} field="amount"/>
+									<View className="basis-full md:basis-1/2">
+										<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2">
+											<Text className="text-primary font-semibold text-xl pt-1 pb-2">商品銷量首五位</Text>
+											<BarChart chartData={statData.rankAmount} field="amount"/>
+										</View>
 									</View>
-								<View className="basis-full md:basis-0 py-3"></View>
-									<View className="basis-full md:basis-1/2 bg-shiro shadow-lg px-4 py-2 rounded-xl">
-										<Text className="text-primary font-semibold text-xl pt-1 pb-2">商品銷額首五位</Text>
-										<BarChart chartData={statData.rankLumpsum} field="lumpsum"/>
+									<View className="basis-full md:basis-0 py-3"></View>
+									<View className="basis-full md:basis-1/2">
+										<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2">
+											<Text className="text-primary font-semibold text-xl pt-1 pb-2">商品銷額首五位</Text>
+											<BarChart chartData={statData.rankLumpsum} field="lumpsum"/>
+										</View>
 									</View>
 								</View>
 								{filterCategory == -1 &&
-								<>
+								<View className='flex flex-row flex-wrap mx-2 my-2'>
 									<View className="basis-full md:basis-0 py-3"></View>
-									<View className="basis-full md:basis-1/2 bg-shiro shadow-lg px-4 py-2 rounded-xl">
-										<Text className="text-primary font-semibold text-xl pt-1 pb-2">分類銷額首五位</Text>
-										<BarChart chartData={statData.rankAmountbyCat} field="lumpsum"/>
+									<View className="basis-full md:basis-1/2">
+										<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2">
+											<Text className="text-primary font-semibold text-xl pt-1 pb-2">分類銷量首五位</Text>
+											<BarChart chartData={statData.rankAmountbyCat} field="lumpsum"/>
+										</View>
 									</View>
 									<View className="basis-full md:basis-0 py-3"></View>
-									<View className="basis-full md:basis-1/2 bg-shiro shadow-lg px-4 py-2 rounded-xl">
-										<Text className="text-primary font-semibold text-xl pt-1 pb-2">分類銷額首五位</Text>
-										<BarChart chartData={statData.rankLumpsumbyCat} field="lumpsum"/>
+									<View className="basis-full md:basis-1/2">
+										<View className="bg-shiro shadow-lg px-4 py-2 rounded-xl mx-2">
+											<Text className="text-primary font-semibold text-xl pt-1 pb-2">分類銷額首五位</Text>
+											<BarChart chartData={statData.rankLumpsumbyCat} field="lumpsum"/>
+										</View>
 									</View>
-								</>
+								</View>
 								}
 							</ScrollView>
 						</View>
