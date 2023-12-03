@@ -21,7 +21,7 @@ const Info = () => {
 									<Text className="basis-full">SauNgan ver beta0.1</Text>
 								</View>
 								<View className="justify-center items-center py-2 relative group w-full flex flex-row px-2">
-									<Text className="basis-full">Build 20231202</Text>
+									<Text className="basis-full">Build 20231203</Text>
 								</View>
 								<View className="justify-center items-center py-2 relative group w-full flex flex-row px-2">
 									<Text className="basis-full">develop by sau1426@lobizone</Text>

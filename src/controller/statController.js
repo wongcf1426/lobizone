@@ -2,9 +2,9 @@ import * as dbModel from '../model/dbModel.js'
 import * as testingData from '../../store/testing';
 import * as FileSystem from 'expo-file-system';
 
-import * as Sharing from 'expo-sharing';
+//import * as Sharing from 'expo-sharing';
 
-import XLSX from 'xlsx';
+//import XLSX from 'xlsx';
 
 export const getStatData = async (filterCategory = -1) => {
 	try {
@@ -88,7 +88,7 @@ export const exportAsExcel = async () => {
 			formatedProductList.push(tmpProductDetail)
 		}
 
-		var data = formatedProductList;
+		/*var data = formatedProductList;
 		var ws = XLSX.utils.json_to_sheet(data);
 		var wb = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(wb,ws,"商品");
@@ -103,8 +103,8 @@ export const exportAsExcel = async () => {
 			return({state: 'success', data:'success'});
 		}else{
 			return({state: 'statERR', errMsg: '未能匯出資料'});
-		}
-		
+		}*/
+		return({state: 'success', data:'success'});
 	}
 	catch (error) {
 		console.log(error)
