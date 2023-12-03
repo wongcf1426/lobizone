@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Modal, TouchableWithoutFeedback } from "react-native";
+import { View, Text, TouchableWithoutFeedback } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 
 import Navigation from '../components/navigation';
@@ -20,7 +20,9 @@ const Settings = () => {
 	const exportExcel = async() => {
 		setLoading(true)
 		let result = await exportAsExcel();
-		if (!result?.data) {
+		if (result?.data) {
+			msgBoxRef.current.open('已匯出excel:' + result.data, 'bg-primary')
+		}else {
 			msgBoxRef.current.open(result.errMsg, 'bg-focus')
 		}
 		setLoading(false)
